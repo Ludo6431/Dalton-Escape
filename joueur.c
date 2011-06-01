@@ -5,7 +5,7 @@
 
 #include "joueur.h"
 
-void player_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
+void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     GtkWidget *dialog;
     GtkWidget *content_area;
         GtkWidget *table;
@@ -68,5 +68,13 @@ void player_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     gtk_color_button_get_color(GTK_COLOR_BUTTON(bt_color), &pl->color);
 
     gtk_widget_destroy(dialog);
+}
+
+void joueur_sauver(JE_joueur *pl, FILE *fd) {
+    fwrite(pl, sizeof(JE_joueur), 1, fd);
+}
+
+void joueur_charger(JE_joueur *pl, FILE *fd) {
+    fread(pl, sizeof(JE_joueur), 1, fd);
 }
 

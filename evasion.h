@@ -26,7 +26,7 @@ typedef enum {
 } etat_t;
 
 typedef struct {
-    int nb_pions[2];        // le nb de pions qui sont passés pour chaque joueur
+    int nb_pions[2];    // le nb de pions qui sont passés pour chaque joueur
     etat_t etat;        // état en cours
     int joueur_debut;   // joueur qui commence
 
@@ -40,6 +40,9 @@ etat_t  JE_etat             (JE_jeu *je);
 void    JE_nouvellepartie   (JE_jeu *je);
 void    JE_selectpion       (JE_jeu *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
 void    JE_bougerpion       (JE_jeu *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
+
+void    JE_sauverpartie     (JE_jeu *je, FILE *fd);
+void    JE_chargerpartie    (JE_jeu *je, FILE *fd);
 
 #endif
 

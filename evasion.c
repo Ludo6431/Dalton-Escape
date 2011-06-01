@@ -163,6 +163,7 @@ void resetcliquer(JE_jeu *je) {
 
 void JE_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
     assert(je);
+    assert(!(je->etat & ETAT_ATTENTEBOUGER));
     assert(case_get(je, sx, sy) & CASE_PEUTCLIQUER);
 
     je->etat |= ETAT_ATTENTEBOUGER;
@@ -198,12 +199,13 @@ void JE_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
 
     je->etat = joueur?ETAT_J1:ETAT_J2;    // au joueur suivant (et on reset l'état avec les flags)
 
-    case_set(je, je->sx, je->sy, case_get(je, je->sx, je->sy)&~CASE_MASQTYPE);  // on enlève le pion de là où il était
+    // on enlève le pion de là où il était
+    case_set(je, je->sx, je->sy, (case_get(je, je->sx, je->sy)&~CASE_MASQTYPE) | CASE_LIBRE);
 
     if(DANSSORT(dx, dy))    // le joueur a passé un pion dans la sortie
         je->nb_pions[joueur]++;
 
-    if(je->nb_pions[joueur]==3)
+    if(je->nb_pions[joueur]==3) // on vérifie si ce déplacement lui permet de gagner
         je->etat = joueur?ETAT_J2WIN:ETAT_J1WIN;
 
     if(DANSCOUR(dx, dy)) {  // on met le pion là où il va
@@ -242,5 +244,13 @@ void JE_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
                 je->tab[i][j] |= CASE_PEUTCLIQUER;
 
     je->part[1] &= ~CASE_PEUTCLIQUER;
+}
+
+void JE_sauverpartie(JE_jeu *je, FILE *fd) {
+    fwrite(je, sizeof(JE_jeu), 1, fd);
+}
+
+void JE_chargerpartie(JE_jeu *je, FILE *fd) {
+    fread(je, sizeof(JE_jeu), 1, fd);
 }
 

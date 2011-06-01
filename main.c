@@ -14,12 +14,15 @@ typedef struct {
                 GtkWidget *table;
                     GtkWidget *bt_cellules;
                     GtkWidget *bts_cases[9][9];
-                    GtkWidget *lbl_J1;
+                    GtkWidget *lbl_J1, *score_J1;
                     GtkWidget *bt_sortie;
-                    GtkWidget *lbl_J2;
+                    GtkWidget *lbl_J2, *score_J2;
             GtkWidget *lbl_statut;
 
+    JE_joueur J1, J2;
     JE_jeu jeu;
+
+    char *filename;
 } JE_contexte;
 
 void maj_appar_bouton(GtkWidget *bt, case_t c) {
@@ -53,23 +56,30 @@ void maj_etat(JE_contexte *ctx) {
 
     switch(ETAT_ETAT(e)) {
     case ETAT_J1:
-        strcpy(buffer, "Joueur 1");
+        sprintf(buffer, "Au tour de %s", ctx->J1.pseudo);
         break;
     case ETAT_J2:
-        strcpy(buffer, "Joueur 2");
+        sprintf(buffer, "Au tour de %s", ctx->J2.pseudo);
         break;
     case ETAT_J1WIN:
-        strcpy(buffer, "Joueur 1 gagne");
+        sprintf(buffer, "%s gagne", ctx->J1.pseudo);
+        ctx->J1.score++;
         break;
     case ETAT_J2WIN:
-        strcpy(buffer, "Joueur 2 gagne");
+        sprintf(buffer, "%s gagne", ctx->J2.pseudo);
+        ctx->J2.score++;
         break;
     default:
-        sprintf(buffer, "Etat %d", e);
+        sprintf(buffer, "Autre état : %d", e);
         break;
     }
 
     gtk_label_set_text(GTK_LABEL(ctx->lbl_statut), buffer);
+
+    sprintf(buffer, "%d", ctx->J1.score);
+    gtk_entry_set_text(GTK_ENTRY(ctx->score_J1), buffer);
+    sprintf(buffer, "%d", ctx->J2.score);
+    gtk_entry_set_text(GTK_ENTRY(ctx->score_J2), buffer);
 
     // mise à jour du plateau
     maj_appar_bouton(ctx->bt_cellules, ctx->jeu.part[0]);
@@ -106,17 +116,94 @@ void maj_etat(JE_contexte *ctx) {
 }
 
 void nouvelle_partie(GtkWidget *w, JE_contexte *ctx) {
+    joueur_init(&ctx->J1, "Nouveau joueur", "Joueur 1", GTK_WINDOW(ctx->fenetre));
+    gtk_label_set_label(GTK_LABEL(ctx->lbl_J1), ctx->J1.pseudo);
+    joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->fenetre));
+    gtk_label_set_label(GTK_LABEL(ctx->lbl_J2), ctx->J2.pseudo);
+
     JE_nouvellepartie(&ctx->jeu);
 
     maj_etat(ctx);
 }
 
+#define EXT_FICHIER ".esc"
+
 void sauver_partie(GtkWidget *w, JE_contexte *ctx) {
-    // TODO
+    GtkWidget *dialog = gtk_file_chooser_dialog_new("Sauvegarder partie", GTK_WINDOW(ctx->fenetre), GTK_FILE_CHOOSER_ACTION_SAVE,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+        NULL
+    );
+
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*"EXT_FICHIER);
+    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
+    if(!ctx->filename) {    // on n'a pas chargé de partie
+//        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), "~/");
+        gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "partie"EXT_FICHIER);
+    }
+    else
+        gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), ctx->filename);
+
+    if(gtk_dialog_run(GTK_DIALOG(dialog))==GTK_RESPONSE_ACCEPT) {
+        char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+        if(ctx->filename) free(ctx->filename);
+        ctx->filename = strdup(filename);
+
+        FILE *fd = fopen(filename, "wb+");
+        g_free (filename);
+        if(!fd)
+            printf("wtf!!\n");
+
+        // ordre important
+        joueur_sauver(&ctx->J1, fd);
+        joueur_sauver(&ctx->J2, fd);
+        JE_sauverpartie(&ctx->jeu, fd);
+
+        // TODO: append checksum
+
+        fclose(fd);
+    }
+    gtk_widget_destroy (dialog);
 }
 
 void charger_partie(GtkWidget *w, JE_contexte *ctx) {
-    // TODO
+    GtkWidget *dialog = gtk_file_chooser_dialog_new("Ouvrir partie", GTK_WINDOW(ctx->fenetre), GTK_FILE_CHOOSER_ACTION_OPEN,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+        NULL
+    );
+
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*"EXT_FICHIER);
+    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+    if(gtk_dialog_run(GTK_DIALOG(dialog))==GTK_RESPONSE_ACCEPT) {
+        char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+        ctx->filename = strdup(filename);   // on garde une copie pour être au bon endroit au moment de sauvegarder
+
+        FILE *fd = fopen(filename, "rb+");
+        g_free(filename);
+        if(!fd)
+            printf("wtf!?\n");
+
+        // TODO: checksum
+
+        // ordre important
+        joueur_charger(&ctx->J1, fd);
+        joueur_charger(&ctx->J2, fd);
+        JE_chargerpartie(&ctx->jeu, fd);
+
+        fclose(fd);
+    }
+    gtk_widget_destroy (dialog);
+
+    // et on met à jour tout ça sur l'IHM
+    maj_etat(ctx);
 }
 
 void quitter_partie(GtkWidget *w, JE_contexte *ctx) {
@@ -138,8 +225,6 @@ void action_pion(GtkWidget *widget, JE_contexte *ctx) {
                     x = i;
                     y = j;
                 }
-
-printf("bouton%d,%d appuyé\n", x, y);
 
     // on fait l'action demandée en fonction de si on vient de choisir le pion ou sa destination
     if(JE_etat(&ctx->jeu)&ETAT_ATTENTEBOUGER)
@@ -217,6 +302,7 @@ int main(int argc,char *argv[]) {
                     ev.bt_cellules = gtk_button_new_with_label("Cellules");
                     g_signal_connect(G_OBJECT(ev.bt_cellules), "clicked", G_CALLBACK(action_pion), &ev);
                     gtk_table_attach(GTK_TABLE(ev.table), ev.bt_cellules, 0, 9, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_widget_set_sensitive(ev.bt_cellules, FALSE);
                     gtk_widget_show(ev.bt_cellules);
 
                     // 9*9 boutons pour les cases
@@ -225,25 +311,41 @@ int main(int argc,char *argv[]) {
                             ev.bts_cases[i][j] = gtk_button_new ();
                             gtk_table_attach(GTK_TABLE(ev.table), ev.bts_cases[i][j], i, i+1, j+2, j+3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                             g_signal_connect(G_OBJECT(ev.bts_cases[i][j]), "clicked", G_CALLBACK(action_pion), &ev);
+                            gtk_widget_set_sensitive(ev.bts_cases[i][j], FALSE);
                             gtk_widget_show(ev.bts_cases[i][j]);
                         }
                     }
 
-                    // label joueur 1
+                    // label & score joueur 1
                     ev.lbl_J1 = gtk_label_new("Joueur 1");
-                    gtk_table_attach(GTK_TABLE(ev.table), ev.lbl_J1, 0, 2, 11, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_table_attach(GTK_TABLE(ev.table), ev.lbl_J1, 0, 2, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                     gtk_widget_show(ev.lbl_J1);
+
+                    ev.score_J1 = gtk_entry_new();
+                    gtk_entry_set_editable(GTK_ENTRY(ev.score_J1), FALSE);
+                    gtk_entry_set_width_chars(GTK_ENTRY(ev.score_J1), 2);
+                    gtk_entry_set_alignment(GTK_ENTRY(ev.score_J1), 0.5);
+                    gtk_table_attach(GTK_TABLE(ev.table), ev.score_J1, 0, 2, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_widget_show(ev.score_J1);
 
                     // bouton sortie
                     ev.bt_sortie = gtk_button_new_with_label("Sortie");
                     g_signal_connect(G_OBJECT(ev.bt_sortie), "clicked", G_CALLBACK(action_pion), &ev);
                     gtk_table_attach(GTK_TABLE(ev.table), ev.bt_sortie, 2, 7, 11, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_widget_set_sensitive(ev.bt_sortie, FALSE);
                     gtk_widget_show(ev.bt_sortie);
 
                     // label joueur 2
                     ev.lbl_J2 = gtk_label_new("Joueur 2");
-                    gtk_table_attach(GTK_TABLE(ev.table), ev.lbl_J2, 7, 9, 11, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_table_attach(GTK_TABLE(ev.table), ev.lbl_J2, 7, 9, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                     gtk_widget_show(ev.lbl_J2);
+
+                    ev.score_J2 = gtk_entry_new();
+                    gtk_entry_set_editable(GTK_ENTRY(ev.score_J2), FALSE);
+                    gtk_entry_set_width_chars(GTK_ENTRY(ev.score_J2), 2);
+                    gtk_entry_set_alignment(GTK_ENTRY(ev.score_J2), 0.5);
+                    gtk_table_attach(GTK_TABLE(ev.table), ev.score_J2, 7, 9, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                    gtk_widget_show(ev.score_J2);
 
                 gtk_widget_show(ev.table);
 
