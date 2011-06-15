@@ -133,7 +133,7 @@ int canmove(JE_jeu *je, int sx, int sy, int dx, int dy) {
     if(CASE_TYPE(case_get(je, dx, dy)) != CASE_LIBRE)   // on ne peut pas aller là où il y a déjà qqu'un
         return 0;
 
-    if(DANSSORT(dx, dy) && !(case_get(je, sx, sy)&CASE_GRISE))  // il faut êter sur une case grise pour sortir
+    if(DANSSORT(dx, dy) && !(case_get(je, sx, sy)&CASE_GRISE))  // il faut être sur une case grise pour sortir
         return 0;
 
     if(DANSCELL(dx, dy))    // on peut revenir à tout moment aux cellules
@@ -221,7 +221,7 @@ void JE_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
             else    // je->sy == dy
                 dist = (gx>je->sx?-1:1)*abs(dx-je->sx);
 
-            // on enlève le gardin de là où il était et les pions sur le passage du gardien
+            // on enlève le gardien de là où il était et les pions sur le passage du gardien
             for(i=0; (i<=dist && dist>0) || (i>=dist && dist<0); i+=(dist>0?1:-1))
                 je->tab[CLAMP(0, gx+i, 8)][dy] = je->tab[CLAMP(0, gx+i, 8)][dy]&~CASE_MASQTYPE;
             je->tab[CLAMP(0, gx+dist, 8)][dy] |= CASE_GARDIEN;  // on met le gardien à sa nouvelle place

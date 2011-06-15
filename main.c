@@ -76,6 +76,7 @@ void maj_etat(JE_contexte *ctx) {
 
     gtk_label_set_text(GTK_LABEL(ctx->lbl_statut), buffer);
 
+    // mise à jour des labels de scores
     sprintf(buffer, "%d", ctx->J1.score);
     gtk_entry_set_text(GTK_ENTRY(ctx->score_J1), buffer);
     sprintf(buffer, "%d", ctx->J2.score);
@@ -91,9 +92,6 @@ void maj_etat(JE_contexte *ctx) {
             GtkWidget *bt = ctx->bts_cases[i][j];
 
             switch(CASE_TYPE(c)) {
-            case CASE_LIBRE:
-                txt = " ";
-                break;
             case CASE_J1:
                 txt = "1";
                 break;
@@ -103,7 +101,9 @@ void maj_etat(JE_contexte *ctx) {
             case CASE_GARDIEN:
                 txt = "G";
                 break;
+            case CASE_LIBRE:
             default:
+                txt = " ";
                 break;
             }
 
@@ -213,12 +213,12 @@ void quitter_partie(GtkWidget *w, JE_contexte *ctx) {
 void action_pion(GtkWidget *widget, JE_contexte *ctx) {
     int i, j, x, y;
 
-    // on cherche le bouton qui a déclenché ça (:s)
+    // on cherche le bouton qui a déclenché ça
     if(widget == ctx->bt_cellules)
         y = -1;
     else if(widget == ctx->bt_sortie)
         y = 9;
-    else
+    else    // evil loop
         for(j=0; j<9; j++)
             for(i=0; i<9; i++)
                 if(widget == ctx->bts_cases[i][j]) {
@@ -358,8 +358,8 @@ int main(int argc,char *argv[]) {
 
         gtk_widget_show(ev.vbox);
 
-    hints.min_aspect = 9.0/(13.0+2.0);
-    hints.max_aspect = 9.0/(13.0+2.0);
+    hints.min_aspect = 9.0/(13.0+1.5);
+    hints.max_aspect = 9.0/(13.0+1.5);
     gtk_window_set_geometry_hints(GTK_WINDOW(ev.fenetre), NULL, &hints, GDK_HINT_ASPECT);
     gtk_widget_show(ev.fenetre);
 
