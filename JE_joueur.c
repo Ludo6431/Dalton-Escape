@@ -70,11 +70,11 @@ void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     gtk_widget_destroy(dialog);
 }
 
-void joueur_sauver(JE_joueur *pl, FILE *fd) {
-    fwrite(pl, sizeof(*pl), 1, fd);
+int joueur_sauver(JE_joueur *pl, FILE *fd) {
+    return fwrite(pl, sizeof(*pl), 1, fd)!=1;
 }
 
-void joueur_charger(JE_joueur *pl, FILE *fd) {
-    fread(pl, sizeof(*pl), 1, fd);
+int joueur_charger(JE_joueur *pl, FILE *fd) {
+    return fread(pl, sizeof(*pl), 1, fd)!=1;
 }
 

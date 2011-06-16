@@ -246,11 +246,11 @@ void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-void jeu_sauverpartie(JE_jeu *je, FILE *fd) {
-    fwrite(je, sizeof(JE_jeu), 1, fd);
+int jeu_sauverpartie(JE_jeu *je, FILE *fd) {
+    return fwrite(je, sizeof(*je), 1, fd)!=1;
 }
 
-void jeu_chargerpartie(JE_jeu *je, FILE *fd) {
-    fread(je, sizeof(JE_jeu), 1, fd);
+int jeu_chargerpartie(JE_jeu *je, FILE *fd) {
+    return fread(je, sizeof(*je), 1, fd)!=1;
 }
 

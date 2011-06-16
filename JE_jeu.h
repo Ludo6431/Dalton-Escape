@@ -1,5 +1,5 @@
-#ifndef _EVASION_H
-#define _EVASION_H
+#ifndef _JE_JEU_H
+#define _JE_JEU_H
 
 #include "outils.h"
 
@@ -41,8 +41,8 @@ void    jeu_nouvellepartie   (JE_jeu *je);
 void    jeu_selectpion       (JE_jeu *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
 void    jeu_bougerpion       (JE_jeu *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
 
-void    jeu_sauverpartie     (JE_jeu *je, FILE *fd);
-void    jeu_chargerpartie    (JE_jeu *je, FILE *fd);
+int     jeu_sauverpartie     (JE_jeu *je, FILE *fd);
+int     jeu_chargerpartie    (JE_jeu *je, FILE *fd);
 
 #endif
 
