@@ -20,7 +20,6 @@ GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
         { "case-gardien", "", 0, 0, "" }
     };
     gtk_stock_add(items, G_N_ELEMENTS(items));
-    gtk_rc_parse("style.rc");
 
     // on garde au chaud la fenêtre où on est
     gui->fenetre = GTK_WIDGET(fenpar);
