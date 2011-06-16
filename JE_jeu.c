@@ -3,15 +3,15 @@
 #include <string.h>
 #include <assert.h>
 
-#include "evasion.h"
+#include "JE_jeu.h"
 
-etat_t JE_etat(JE_jeu *je) {
+etat_t jeu_etat(JE_jeu *je) {
     assert(je);
 
     return je->etat;
 }
 
-void JE_nouvellepartie(JE_jeu *je) {
+void jeu_nouvellepartie(JE_jeu *je) {
     assert(je);
 
     je->nb_pions[0] = je->nb_pions[1] = 0;
@@ -161,7 +161,7 @@ void resetcliquer(JE_jeu *je) {
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-void JE_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
+void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
     assert(je);
     assert(!(je->etat & ETAT_ATTENTEBOUGER));
     assert(case_get(je, sx, sy) & CASE_PEUTCLIQUER);
@@ -190,7 +190,7 @@ void JE_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
         je->part[1] |= CASE_PEUTCLIQUER;
 }
 
-void JE_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
+void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
     assert(je);
     assert(je->etat & ETAT_ATTENTEBOUGER);
     assert(case_get(je, dx, dy) & CASE_PEUTCLIQUER);
@@ -246,11 +246,11 @@ void JE_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-void JE_sauverpartie(JE_jeu *je, FILE *fd) {
+void jeu_sauverpartie(JE_jeu *je, FILE *fd) {
     fwrite(je, sizeof(JE_jeu), 1, fd);
 }
 
-void JE_chargerpartie(JE_jeu *je, FILE *fd) {
+void jeu_chargerpartie(JE_jeu *je, FILE *fd) {
     fread(je, sizeof(JE_jeu), 1, fd);
 }
 

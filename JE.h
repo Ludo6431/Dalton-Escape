@@ -1,8 +1,8 @@
 #ifndef _CALLBACKS_H
 #define _CALLBACKS_H
 
-#include "joueur.h"
-#include "evasion.h"
+#include "JE_joueur.h"
+#include "JE_jeu.h"
 
 typedef struct {
     GtkWidget *fenetre;

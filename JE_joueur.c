@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-#include "joueur.h"
+#include "JE_joueur.h"
 
 void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     GtkWidget *dialog;
@@ -71,10 +71,10 @@ void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
 }
 
 void joueur_sauver(JE_joueur *pl, FILE *fd) {
-    fwrite(pl, sizeof(JE_joueur), 1, fd);
+    fwrite(pl, sizeof(*pl), 1, fd);
 }
 
 void joueur_charger(JE_joueur *pl, FILE *fd) {
-    fread(pl, sizeof(JE_joueur), 1, fd);
+    fread(pl, sizeof(*pl), 1, fd);
 }
 

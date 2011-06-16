@@ -10,7 +10,8 @@ int main(int argc,char *argv[]) {
     JE ctx;
     bzero(&ctx, sizeof(ctx));
 
-    gtk_init(&argc,&argv);
+    // initialisation de gtk
+    gtk_init(&argc, &argv);
 
     // création fenêtre du jeu
     fenetre = gtk_window_new(GTK_WINDOW_TOPLEVEL);

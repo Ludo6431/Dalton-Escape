@@ -1,5 +1,5 @@
-#ifndef _JOUEUR_H
-#define _JOUEUR_H
+#ifndef _JE_JOUEUR_H
+#define _JE_JOUEUR_H
 
 #include <gtk/gtk.h>
 

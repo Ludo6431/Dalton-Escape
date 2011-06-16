@@ -1,7 +1,7 @@
 .PHONY:all clean
 
 EXEC := evasion
-OBJS := main.o evasion.o joueur.o JE.o JE_callbacks.o
+OBJS := main.o JE.o JE_joueur.o JE_jeu.o JE_callbacks.o
 
 CC = gcc
 CFLAGS = -Wall -g `pkg-config gtk+-2.0 --cflags`

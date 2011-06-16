@@ -36,13 +36,13 @@ typedef struct {
     case_t part[2];     // cases cellules et sortie
 } JE_jeu;
 
-etat_t  JE_etat             (JE_jeu *je);
-void    JE_nouvellepartie   (JE_jeu *je);
-void    JE_selectpion       (JE_jeu *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
-void    JE_bougerpion       (JE_jeu *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
+etat_t  jeu_etat             (JE_jeu *je);
+void    jeu_nouvellepartie   (JE_jeu *je);
+void    jeu_selectpion       (JE_jeu *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
+void    jeu_bougerpion       (JE_jeu *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
 
-void    JE_sauverpartie     (JE_jeu *je, FILE *fd);
-void    JE_chargerpartie    (JE_jeu *je, FILE *fd);
+void    jeu_sauverpartie     (JE_jeu *je, FILE *fd);
+void    jeu_chargerpartie    (JE_jeu *je, FILE *fd);
 
 #endif
 

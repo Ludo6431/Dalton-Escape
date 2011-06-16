@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "evasion.h"
-#include "joueur.h"
+#include "JE_joueur.h"
+#include "JE_jeu.h"
 
 #include "JE_callbacks.h"
 
@@ -43,7 +43,7 @@ void maj_etat(JE *ctx) {
     int i, j;
 
     // mise à jour du label d'état
-    etat_t e = JE_etat(&ctx->jeu);
+    etat_t e = jeu_etat(&ctx->jeu);
 
     switch(ETAT_ETAT(e)) {
     case ETAT_J1:
@@ -89,7 +89,7 @@ void nouvelle_partie(GtkWidget *w, JE *ctx) {
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->lbl_J2), ctx->J2.pseudo);
 
-    JE_nouvellepartie(&ctx->jeu);
+    jeu_nouvellepartie(&ctx->jeu);
 
     maj_etat(ctx);
 }
@@ -129,7 +129,7 @@ void sauver_partie(GtkWidget *w, JE *ctx) {
         // TODO: add header ?
 
         // ordre important
-        JE_sauverpartie(&ctx->jeu, fd);
+        jeu_sauverpartie(&ctx->jeu, fd);
         joueur_sauver(&ctx->J1, fd);
         joueur_sauver(&ctx->J2, fd);
 
@@ -164,7 +164,7 @@ void charger_partie(GtkWidget *w, JE *ctx) {
         // TODO: verify checksum (and header ?)
 
         // ordre important
-        JE_chargerpartie(&ctx->jeu, fd);
+        jeu_chargerpartie(&ctx->jeu, fd);
         joueur_charger(&ctx->J1, fd);
         joueur_charger(&ctx->J2, fd);
 
@@ -197,10 +197,10 @@ void action_pion(GtkWidget *widget, JE *ctx) {
                 }
 
     // on fait l'action demandée en fonction de si on vient de choisir le pion ou sa destination
-    if(JE_etat(&ctx->jeu)&ETAT_ATTENTEBOUGER)
-        JE_bougerpion(&ctx->jeu, x, y);
+    if(jeu_etat(&ctx->jeu)&ETAT_ATTENTEBOUGER)
+        jeu_bougerpion(&ctx->jeu, x, y);
     else
-        JE_selectpion(&ctx->jeu, x, y);
+        jeu_selectpion(&ctx->jeu, x, y);
 
     // et on remet à jour l'IHM pour refléter les modifs
     maj_etat(ctx);
