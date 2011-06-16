@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-#include "JE_joueur.h"
+#include "JE/joueur.h"
 
 void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     GtkWidget *dialog;

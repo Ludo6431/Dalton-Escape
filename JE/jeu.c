@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "JE_jeu.h"
+#include "JE/jeu.h"
 
 etat_t jeu_etat(JE_jeu *je) {
     assert(je);

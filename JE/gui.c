@@ -1,0 +1,104 @@
+#include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "JE/gui_menu.h"
+#include "JE/gui_action.h"
+
+#include "JE/gui.h"
+
+// crée l'interface que l'on peut ajouter dans n'importe quel container
+GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
+    int i;
+    int j;
+
+    // création du style pour les différents boutons
+    GtkStockItem items[] = {
+        { "case-J1", "", 0, 0, "" },
+        { "case-J2", "", 0, 0, "" },
+        { "case-gardien", "", 0, 0, "" }
+    };
+    gtk_stock_add(items, G_N_ELEMENTS(items));
+    gtk_rc_parse("style.rc");
+
+    // on garde au chaud la fenêtre où on est
+    gui->fenetre = GTK_WIDGET(fenpar);
+
+    // vbox principale
+    gui->vbox = gtk_vbox_new(FALSE, 0);
+
+        // menu
+        gui->menu = gui_menu_new(GTK_WINDOW(gui->fenetre), user_ptr);
+        gtk_box_pack_start(GTK_BOX(gui->vbox), gui->menu, FALSE, FALSE, 0);
+        gtk_widget_show(gui->menu);
+
+        // aspect frame (frame de ratio constant pour être sûr que les cases restent carrées)
+        gui->aframe = gtk_aspect_frame_new(NULL, 0.5, 0.5, 9.0/13.0, 0);
+        gtk_box_pack_start(GTK_BOX(gui->vbox), gui->aframe, TRUE, TRUE, 0);
+
+            // la table qui contient le plateau de jeu
+            gui->table = gtk_table_new(13, 9, TRUE);
+            gtk_container_add(GTK_CONTAINER(gui->aframe), gui->table);
+
+                // cellules
+                gui->bt_cellules = gtk_button_new_with_label("Cellules");
+                g_signal_connect(G_OBJECT(gui->bt_cellules), "clicked", G_CALLBACK(action_pion), user_ptr);
+                gtk_table_attach(GTK_TABLE(gui->table), gui->bt_cellules, 0, 9, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_set_sensitive(gui->bt_cellules, FALSE);
+                gtk_widget_show(gui->bt_cellules);
+
+                // 9*9 boutons pour les cases
+                for(j=0; j<9; j++) {
+                    for(i=0; i<9; i++) {
+                        gui->bts_cases[i][j] = gtk_button_new ();
+                        gtk_table_attach(GTK_TABLE(gui->table), gui->bts_cases[i][j], i, i+1, j+2, j+3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                        g_signal_connect(G_OBJECT(gui->bts_cases[i][j]), "clicked", G_CALLBACK(action_pion), user_ptr);
+                        gtk_widget_set_sensitive(gui->bts_cases[i][j], FALSE);
+                        gtk_widget_show(gui->bts_cases[i][j]);
+                    }
+                }
+
+                // label & score joueur 1
+                gui->lbl_J1 = gtk_label_new("Joueur 1");
+                gtk_table_attach(GTK_TABLE(gui->table), gui->lbl_J1, 0, 2, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_show(gui->lbl_J1);
+
+                gui->score_J1 = gtk_entry_new();
+                gtk_entry_set_editable(GTK_ENTRY(gui->score_J1), FALSE);
+                gtk_entry_set_width_chars(GTK_ENTRY(gui->score_J1), 2);
+                gtk_entry_set_alignment(GTK_ENTRY(gui->score_J1), 0.5);
+                gtk_table_attach(GTK_TABLE(gui->table), gui->score_J1, 0, 2, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_show(gui->score_J1);
+
+                // bouton sortie
+                gui->bt_sortie = gtk_button_new_with_label("Sortie");
+                g_signal_connect(G_OBJECT(gui->bt_sortie), "clicked", G_CALLBACK(action_pion), user_ptr);
+                gtk_table_attach(GTK_TABLE(gui->table), gui->bt_sortie, 2, 7, 11, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_set_sensitive(gui->bt_sortie, FALSE);
+                gtk_widget_show(gui->bt_sortie);
+
+                // label joueur 2
+                gui->lbl_J2 = gtk_label_new("Joueur 2");
+                gtk_table_attach(GTK_TABLE(gui->table), gui->lbl_J2, 7, 9, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_show(gui->lbl_J2);
+
+                gui->score_J2 = gtk_entry_new();
+                gtk_entry_set_editable(GTK_ENTRY(gui->score_J2), FALSE);
+                gtk_entry_set_width_chars(GTK_ENTRY(gui->score_J2), 2);
+                gtk_entry_set_alignment(GTK_ENTRY(gui->score_J2), 0.5);
+                gtk_table_attach(GTK_TABLE(gui->table), gui->score_J2, 7, 9, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                gtk_widget_show(gui->score_J2);
+
+            gtk_widget_show(gui->table);
+
+        gtk_widget_show(gui->aframe);
+
+        // label statut
+        gui->lbl_statut = gtk_label_new("Bonjour !");
+        gtk_box_pack_start(GTK_BOX(gui->vbox), gui->lbl_statut, FALSE, FALSE, 0);
+        gtk_widget_show(gui->lbl_statut);
+
+    return gui->vbox;
+}
+

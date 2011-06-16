@@ -1,7 +1,7 @@
 #ifndef _JE_JEU_H
 #define _JE_JEU_H
 
-#include "outils.h"
+#include "JE/outils.h"
 
 #define CASE_MASQTYPE (0x03)
 #define CASE_TYPE(c) ((c)&CASE_MASQTYPE)

@@ -1,9 +1,7 @@
-#ifndef _CALLBACKS_H
-#define _CALLBACKS_H
+#ifndef _JE_GUI_H
+#define _JE_GUI_H
 
-#include "JE_joueur.h"
-#include "JE_jeu.h"
-
+// éléments de l'interface graphique
 typedef struct {
     GtkWidget *fenetre;
         GtkWidget *vbox;
@@ -16,14 +14,9 @@ typedef struct {
                     GtkWidget *bt_sortie;
                     GtkWidget *lbl_J2, *score_J2;
             GtkWidget *lbl_statut;
+} JE_gui;
 
-    JE_joueur J1, J2;
-    JE_jeu jeu;
-
-    char *filename;
-} JE;
-
-GtkWidget *JE_nouveau(JE *ctx, GtkWindow *fen);
+GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr);
 
 #endif
 

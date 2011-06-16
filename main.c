@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "JE.h"
+#include "JE/JE.h"
 
 int main(int argc,char *argv[]) {
-    GtkWidget *fenetre, *JE_wid;
+    GtkWidget *fenetre;
     JE ctx;
     bzero(&ctx, sizeof(ctx));
 
@@ -18,8 +18,7 @@ int main(int argc,char *argv[]) {
     gtk_window_set_title(GTK_WINDOW(fenetre), "Jeu d'évasion");
     g_signal_connect(G_OBJECT(fenetre), "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
-    JE_wid = JE_nouveau(&ctx, GTK_WINDOW(fenetre));
-    gtk_container_add(GTK_CONTAINER(fenetre), JE_wid);
+    JE_ajout_nouveau(&ctx, GTK_WINDOW(fenetre));    // ajoute l'interface du jeu dans la fenêtre
 
     gtk_widget_show(fenetre);
 
