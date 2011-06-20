@@ -164,7 +164,7 @@ void resetcliquer(JE_jeu *je) {
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
+void jeu_debut_depl(JE_jeu *je, int sx, int sy) {    // choix de la source
     assert(je);
     assert(!(je->etat & ETAT_ATTENTEBOUGER));
     assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);
@@ -183,7 +183,7 @@ void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
 
     int i, j;
 
-    je->part[0] |= CASE_PEUTCLIQUER;    // on peut toujorus aller aux cellules
+    je->part[0] |= CASE_PEUTCLIQUER;    // on peut toujours aller aux cellules
 
     for(j=0; j<9; j++)              // cour
         for(i=0; i<9; i++)
@@ -194,7 +194,11 @@ void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
         je->part[1] |= CASE_PEUTCLIQUER;
 }
 
-void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
+inline void jeu_annuler_depl(JE_jeu *je) {
+    jeu_fin_depl(je, je->sx, je->sy);   // c'est comme si on bougeait là où on était
+}
+
+void jeu_fin_depl(JE_jeu *je, int dx, int dy) {    // choix de la destination
     assert(je);
     assert(je->etat & ETAT_ATTENTEBOUGER);
     assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);

@@ -148,7 +148,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
     _w2xy(widget, ctx, &x, &y);
 
     // on renseigne le jeu du déplacement
-    jeu_selectpion(&ctx->jeu, x, y);
+    jeu_debut_depl(&ctx->jeu, x, y);
 
     // on met à jour l'IHM
     maj_etat(ctx);
@@ -259,13 +259,14 @@ void fin_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
 
-    if(!context->action) {
-        // TODO: important!!
-        return; // le glisser-déposer a été avorté
+    if(context->action) { // le glisser-déposer a bien fonctionné
+        // on effectue l'action
+        jeu_fin_depl(&ctx->jeu, ctx->dx, ctx->dy);
     }
-
-    // on effectue l'action
-    jeu_bougerpion(&ctx->jeu, ctx->dx, ctx->dy);
+    else {
+        // on en renseigne le jeu
+        jeu_annuler_depl(&ctx->jeu);
+    }
 
     // on màj l'IHM
     maj_etat(ctx);
@@ -279,9 +280,9 @@ void action_pion(GtkWidget *widget, JE *ctx) {
 
     // on fait l'action demandée en fonction de si on vient de choisir le pion ou sa destination
     if(jeu_etat(&ctx->jeu)&ETAT_ATTENTEBOUGER)
-        jeu_bougerpion(&ctx->jeu, x, y);
+        jeu_fin_depl(&ctx->jeu, x, y);
     else
-        jeu_selectpion(&ctx->jeu, x, y);
+        jeu_debut_depl(&ctx->jeu, x, y);
 
     // et on remet à jour l'IHM pour refléter les modifs
     maj_etat(ctx);
