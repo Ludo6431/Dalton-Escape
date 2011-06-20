@@ -8,6 +8,20 @@
 
 #include "JE/gui.h"
 
+static inline void _init_case(GtkWidget *bt, void *user_ptr) {
+    // pour le mode de déplacement: sélection source puis sélection départ
+    g_signal_connect(G_OBJECT(bt), "clicked", G_CALLBACK(action_pion), user_ptr);
+
+    // pour le mode de déplacement: glisser-déposer (aka: drag&drop)
+    g_signal_connect(G_OBJECT(bt), "drag-begin", G_CALLBACK(debut_drag), user_ptr);                 // source
+    g_signal_connect(G_OBJECT(bt), "drag-drop", G_CALLBACK(drop_drag), user_ptr);                   // destination
+    g_signal_connect(G_OBJECT(bt), "drag-data-get", G_CALLBACK(demande_donnee_drag), user_ptr);     // source
+    g_signal_connect(G_OBJECT(bt), "drag-data-received", G_CALLBACK(recoit_donnee_drag), user_ptr); // destination
+    g_signal_connect(G_OBJECT(bt), "drag-end", G_CALLBACK(fin_drag), user_ptr);                     // source
+
+    gtk_widget_set_sensitive(bt, FALSE);
+}
+
 // crée l'interface que l'on peut ajouter dans n'importe quel container
 GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
     int i;
@@ -42,9 +56,8 @@ GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
 
                 // cellules
                 gui->bt_cellules = gtk_button_new_with_label("Cellules");
-                g_signal_connect(G_OBJECT(gui->bt_cellules), "clicked", G_CALLBACK(action_pion), user_ptr);
                 gtk_table_attach(GTK_TABLE(gui->table), gui->bt_cellules, 0, 9, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-                gtk_widget_set_sensitive(gui->bt_cellules, FALSE);
+                _init_case(gui->bt_cellules, user_ptr);
                 gtk_widget_show(gui->bt_cellules);
 
                 // 9*9 boutons pour les cases
@@ -52,8 +65,7 @@ GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
                     for(i=0; i<9; i++) {
                         gui->bts_cases[i][j] = gtk_button_new ();
                         gtk_table_attach(GTK_TABLE(gui->table), gui->bts_cases[i][j], i, i+1, j+2, j+3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-                        g_signal_connect(G_OBJECT(gui->bts_cases[i][j]), "clicked", G_CALLBACK(action_pion), user_ptr);
-                        gtk_widget_set_sensitive(gui->bts_cases[i][j], FALSE);
+                        _init_case(gui->bts_cases[i][j], user_ptr);
                         gtk_widget_show(gui->bts_cases[i][j]);
                     }
                 }
@@ -72,9 +84,8 @@ GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
 
                 // bouton sortie
                 gui->bt_sortie = gtk_button_new_with_label("Sortie");
-                g_signal_connect(G_OBJECT(gui->bt_sortie), "clicked", G_CALLBACK(action_pion), user_ptr);
                 gtk_table_attach(GTK_TABLE(gui->table), gui->bt_sortie, 2, 7, 11, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-                gtk_widget_set_sensitive(gui->bt_sortie, FALSE);
+                _init_case(gui->bt_sortie, user_ptr);
                 gtk_widget_show(gui->bt_sortie);
 
                 // label joueur 2

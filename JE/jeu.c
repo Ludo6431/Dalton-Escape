@@ -130,6 +130,9 @@ int canmove(JE_jeu *je, int sx, int sy, int dx, int dy) {
     assert(je);
     assert(sy!=9);  // on ne peut pas partir de la sortie
 
+    if(sy == dy && (dy == -1 || sx == dx || dy == 9))    // on peut annuler notre déplacement en cliquant sur là où on était
+        return 1;   // (rq. : si le y == -1 ou 9, le x peut valoir n'importe quoi)
+
     if(CASE_TYPE(case_get(je, dx, dy)) != CASE_LIBRE)   // on ne peut pas aller là où il y a déjà qqu'un
         return 0;
 
@@ -164,6 +167,7 @@ void resetcliquer(JE_jeu *je) {
 void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
     assert(je);
     assert(!(je->etat & ETAT_ATTENTEBOUGER));
+    assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);
     assert(case_get(je, sx, sy) & CASE_PEUTCLIQUER);
 
     je->etat |= ETAT_ATTENTEBOUGER;
@@ -173,7 +177,7 @@ void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
     je->sy = sy;
 
     // ----
-    // on met à jour les cases cliquables
+    // on met à jour les cases cliquables en fonction de la possibilité du coup
 
     resetcliquer(je);   // on enlève les drapeaux
 
@@ -193,11 +197,15 @@ void jeu_selectpion(JE_jeu *je, int sx, int sy) {    // choix de la source
 void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
     assert(je);
     assert(je->etat & ETAT_ATTENTEBOUGER);
+    assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);
     assert(case_get(je, dx, dy) & CASE_PEUTCLIQUER);
 
     int joueur = ETAT_ETAT(je->etat)==ETAT_J1?0:1;  // joueur qui vient de bouger un pion
 
-    je->etat = joueur?ETAT_J1:ETAT_J2;    // au joueur suivant (et on reset l'état avec les flags)
+    if(je->sy == dy && (dy == -1 || je->sx == dx || dy == 9)) {  // le joueur annule son déplacement => c'est encore à lui de jouer
+        je->etat &= ~ETAT_ATTENTEBOUGER; // on n'est plus dans l'attente de sélection de la destination
+        goto update;    // on remet à jour les boutons qui sont cliquables sans changer de joueur
+    }
 
     // on enlève le pion de là où il était
     case_set(je, je->sx, je->sy, (case_get(je, je->sx, je->sy)&~CASE_MASQTYPE) | CASE_LIBRE);
@@ -205,8 +213,10 @@ void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
     if(DANSSORT(dx, dy))    // le joueur a passé un pion dans la sortie
         je->nb_pions[joueur]++;
 
-    if(je->nb_pions[joueur]==3) // on vérifie si ce déplacement lui permet de gagner
+    if(je->nb_pions[joueur]==3) {   // on vérifie si ce déplacement lui permet de gagner
         je->etat = joueur?ETAT_J2WIN:ETAT_J1WIN;
+        goto update;
+    }
 
     if(DANSCOUR(dx, dy)) {  // on met le pion là où il va
         je->tab[dx][dy] |= joueur?CASE_J2:CASE_J1;
@@ -228,9 +238,13 @@ void jeu_bougerpion(JE_jeu *je, int dx, int dy) {    // choix de la destination
         }
     }
 
-    // ----
-    // on met à jour les cases cliquables
+    // au joueur suivant (et on reset aussi les flags (ETAT_ATTENTEBOUER, ...) stockés dans l'état)
+    je->etat = joueur?ETAT_J1:ETAT_J2;
     joueur ^= 1;
+
+update:
+    // ----
+    // on met à jour les cases cliquables en fonction de l'appartenance des pions
 
     resetcliquer(je);   // on enlève les drapeaux
 

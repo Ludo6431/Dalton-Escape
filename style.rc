@@ -1,6 +1,6 @@
 #pixmap_path "/usr/share/..."
 
-style "case"
+style "defaut"
 {
     stock["case-J1"] =
     {
@@ -18,6 +18,10 @@ style "case"
     }
 }
 
+style "case"
+{
+}
+
 style "case_grise" = "case"
 {
     bg[NORMAL] = { 0.5, 0.5, 0.5 }
@@ -25,6 +29,7 @@ style "case_grise" = "case"
     bg[INSENSITIVE] = { 0.5, 0.5, 0.5 }
 }
 
+widget "*" style "defaut"
 widget "*case*" style "case"
 widget "*case_grise*" style "case_grise"
 

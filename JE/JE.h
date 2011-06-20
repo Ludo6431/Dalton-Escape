@@ -9,6 +9,7 @@
 typedef struct {
     // IHM
     JE_gui gui;
+    int dx, dy; // utilisé pour le glisser-déposer
 
     // les 2 joueurs
     JE_joueur J1, J2;
