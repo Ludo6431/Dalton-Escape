@@ -1,3 +1,4 @@
 *.o
 dalton-escape
+dalton-escape-editeur
 *.esc
