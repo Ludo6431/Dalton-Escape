@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "commun/joueur.h"
+#include "commun/io.h"
 #include "libevasion/evasion.h"
 #include "editeur/gui_action.h"
 
@@ -65,85 +66,16 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
     maj_etat(ctx);
 }
 
-#define EXT_FICHIER ".esc"
-
 void sauvegarder_partie(GtkWidget *w, EDIT *ctx) {
-    GtkWidget *dialog = gtk_file_chooser_dialog_new("Sauvegarder partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_SAVE,
-        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-        GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-        NULL
-    );
-
-    GtkFileFilter *filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*"EXT_FICHIER);
-    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
-
-    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
-    if(!ctx->filename) {    // on n'a pas chargé de partie
-//        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), "~/");
-        gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "partie"EXT_FICHIER);
-    }
-    else
-        gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), ctx->filename);
-
-    if(gtk_dialog_run(GTK_DIALOG(dialog))==GTK_RESPONSE_ACCEPT) {
-        char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-
-        if(ctx->filename) free(ctx->filename);
-        ctx->filename = strdup(filename);
-
-        FILE *fd = fopen(filename, "wb+");
-        g_free (filename);
-        if(!fd)
-            printf("wtf!!\n");
-
-        // TODO: add header ?
-
-        // ordre important
-        ev_sauvegarder(&ctx->jeu, fd);
-        joueur_sauvegarder(&ctx->J1, fd);
-        joueur_sauvegarder(&ctx->J2, fd);
-
-        // TODO: append checksum ?
-
-        fclose(fd);
-    }
-    gtk_widget_destroy (dialog);
+    // on sauvegarde la partie
+    io_sauvegarder(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &ctx->jeu, &ctx->J1, &ctx->J2);
 }
 
 void charger_partie(GtkWidget *w, EDIT *ctx) {
-    GtkWidget *dialog = gtk_file_chooser_dialog_new("Charger partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_OPEN,
-        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-        NULL
-    );
+    // on charge la partie
+    io_charger(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &ctx->jeu, &ctx->J1, &ctx->J2);
 
-    GtkFileFilter *filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*"EXT_FICHIER);
-    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
-
-    if(gtk_dialog_run(GTK_DIALOG(dialog))==GTK_RESPONSE_ACCEPT) {
-        char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-
-        ctx->filename = strdup(filename);   // on garde une copie pour être au bon endroit au moment de sauvegarder
-
-        FILE *fd = fopen(filename, "rb+");
-        g_free(filename);
-        if(!fd)
-            printf("wtf!?\n");
-
-        // TODO: verify checksum (and header ?)
-
-        // ordre important
-        ev_charger(&ctx->jeu, fd);
-        joueur_charger(&ctx->J1, fd);
-        joueur_charger(&ctx->J2, fd);
-
-        fclose(fd);
-    }
-    gtk_widget_destroy (dialog);
-
-    // et on met à jour tout ça sur l'IHM
+    // et on met à jour l'IHM
     maj_etat(ctx);
 }
 

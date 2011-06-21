@@ -9,7 +9,7 @@ EXEC_EDITEUR := dalton-escape-editeur
 OBJS_EDITEUR := editeur.o editeur/editeur.o editeur/gui.o editeur/gui_action.o editeur/gui_menu.o
 
 # en commun
-OBJS_COMMUN := libevasion/evasion.o commun/joueur.o commun/outils.o
+OBJS_COMMUN := libevasion/evasion.o commun/joueur.o commun/outils.o commun/io.o
 
 # -------- pas besoin d'éditer après cette ligne ---------
 
