@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "jeu/jeu.h"
+#include "editeur/editeur.h"
 
 int main(int argc,char *argv[]) {
     GtkWidget *fenetre;
-    JEU ctx;
+    EDIT ctx;
     bzero(&ctx, sizeof(ctx));
 
     // initialisation de gtk
@@ -21,7 +21,7 @@ int main(int argc,char *argv[]) {
     gtk_window_set_title(GTK_WINDOW(fenetre), "Dalton Escape");
     g_signal_connect(G_OBJECT(fenetre), "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
-    jeu_ajout_nouveau(&ctx, GTK_WINDOW(fenetre));    // ajoute l'interface du jeu dans la fenêtre
+    editeur_ajout_nouveau(&ctx, GTK_WINDOW(fenetre));    // ajoute l'interface du jeu dans la fenêtre
 
     gtk_widget_show(fenetre);
 

@@ -16,7 +16,7 @@ static GtkTargetEntry target_list[] = {
     { "PAWN",    0, TARGET_PAWN }
 };
 
-static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
+static void maj_appar_bouton(EDIT *ctx, GtkWidget *bt, case_t c) {
     GtkWidget *image = NULL;
 
     // changement de style
@@ -73,7 +73,7 @@ static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
     gtk_button_set_image(GTK_BUTTON(bt), image);
 }
 
-void maj_etat(JEU *ctx) {
+void maj_etat(EDIT *ctx) {
     char buffer[32];
     int i, j;
 
@@ -116,7 +116,7 @@ void maj_etat(JEU *ctx) {
     maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
 }
 
-static void _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
+static void _w2xy(GtkWidget *w, EDIT *ctx, int *x, int *y) {
     int i, j;
 
     if(w == ctx->gui.bt_cellules)
@@ -132,7 +132,7 @@ static void _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
                 }
 }
 
-void debut_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
+void debut_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
     char *stock = NULL;
     gint w, h;
     int x, y;
@@ -170,7 +170,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
     gtk_button_set_image(GTK_BUTTON(widget), NULL);
 }
 
-gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, JEU *ctx) {
+gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, EDIT *ctx) {
     GdkAtom target_type;
 
     // debug
@@ -197,7 +197,7 @@ gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, g
     return TRUE;
 }
 
-void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
+void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, EDIT *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
@@ -228,7 +228,7 @@ void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectio
     }
 }
 
-void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
+void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, EDIT *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
@@ -251,7 +251,7 @@ void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint
     gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
-void fin_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
+void fin_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
@@ -269,7 +269,7 @@ void fin_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
     maj_etat(ctx);
 }
 
-void action_pion(GtkWidget *widget, JEU *ctx) {
+void action_pion(GtkWidget *widget, EDIT *ctx) {
     int x, y;
 
     // on cherche le bouton qui a déclenché ça

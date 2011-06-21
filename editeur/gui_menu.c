@@ -10,10 +10,10 @@
 #include "editeur/gui_menu.h"
 
 // prototypes des callbacks
-void    nouvelle_partie     (GtkWidget *w, JEU *ctx);
-void    sauvegarder_partie  (GtkWidget *w, JEU *ctx);
-void    charger_partie      (GtkWidget *w, JEU *ctx);
-void    quitter_partie      (GtkWidget *w, JEU *ctx);
+void    nouvelle_partie     (GtkWidget *w, EDIT *ctx);
+void    sauvegarder_partie  (GtkWidget *w, EDIT *ctx);
+void    charger_partie      (GtkWidget *w, EDIT *ctx);
+void    quitter_partie      (GtkWidget *w, EDIT *ctx);
 
 static GtkActionEntry menu_entries[] = {
     /* name, stock id, label, accelerator, tooltip, callback */
@@ -54,7 +54,7 @@ GtkWidget *gui_menu_new(GtkWindow *fenpar, void *user_ptr) {
 
 // -- les callbacks :
 
-void nouvelle_partie(GtkWidget *w, JEU *ctx) {
+void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
     joueur_init(&ctx->J1, "Nouveau joueur", "Joueur 1", GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J1), ctx->J1.pseudo);
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->gui.fenetre));
@@ -67,7 +67,7 @@ void nouvelle_partie(GtkWidget *w, JEU *ctx) {
 
 #define EXT_FICHIER ".esc"
 
-void sauvegarder_partie(GtkWidget *w, JEU *ctx) {
+void sauvegarder_partie(GtkWidget *w, EDIT *ctx) {
     GtkWidget *dialog = gtk_file_chooser_dialog_new("Sauvegarder partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_SAVE,
         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
@@ -111,7 +111,7 @@ void sauvegarder_partie(GtkWidget *w, JEU *ctx) {
     gtk_widget_destroy (dialog);
 }
 
-void charger_partie(GtkWidget *w, JEU *ctx) {
+void charger_partie(GtkWidget *w, EDIT *ctx) {
     GtkWidget *dialog = gtk_file_chooser_dialog_new("Charger partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_OPEN,
         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -147,7 +147,7 @@ void charger_partie(GtkWidget *w, JEU *ctx) {
     maj_etat(ctx);
 }
 
-void quitter_partie(GtkWidget *w, JEU *ctx) {
+void quitter_partie(GtkWidget *w, EDIT *ctx) {
     gtk_main_quit();
 }
 

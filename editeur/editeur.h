@@ -19,8 +19,8 @@ typedef struct {
 
     // fichier où la partie est sauvegardée
     char *filename;
-} JEU;
+} EDIT;
 
-void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen);
+void editeur_ajout_nouveau(EDIT *ctx, GtkWindow *fen);
 
 #endif

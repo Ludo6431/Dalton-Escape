@@ -4,7 +4,7 @@
 
 #include "editeur/editeur.h"
 
-void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen) {
+void editeur_ajout_nouveau(EDIT *ctx, GtkWindow *fen) {
     GtkWidget *gui;
     GdkGeometry hints;
 
