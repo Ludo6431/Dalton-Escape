@@ -1,7 +1,7 @@
-#ifndef _JE_JEU_H
-#define _JE_JEU_H
+#ifndef _EVASION_H
+#define _EVASION_H
 
-#include "JE/outils.h"
+#include "commun/outils.h"
 
 #define CASE_MASQTYPE (0x03)
 #define CASE_TYPE(c) ((c)&CASE_MASQTYPE)
@@ -34,16 +34,15 @@ typedef struct {
 
     case_t tab[9][9];   // 81 cases du plateau
     case_t part[2];     // cases cellules et sortie
-} JE_jeu;
+} EV;
 
-etat_t      jeu_etat            (JE_jeu *je);
-void        jeu_nouvellepartie  (JE_jeu *je);
-void        jeu_debut_depl      (JE_jeu *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
-inline void jeu_annuler_depl    (JE_jeu *je);
-void        jeu_fin_depl        (JE_jeu *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
+void        ev_nouvellepartie   (EV *je);
+void        ev_debut_depl       (EV *je, int x, int y);     // x appartient [0,8] ; y appartient [-1,8]
+inline void ev_annuler_depl     (EV *je);
+void        ev_fin_depl         (EV *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
 
-int         jeu_sauverpartie    (JE_jeu *je, FILE *fd);
-int         jeu_chargerpartie   (JE_jeu *je, FILE *fd);
+int         ev_sauvegarder      (EV *je, FILE *fd);
+int         ev_charger          (EV *je, FILE *fd);
 
 #endif
 

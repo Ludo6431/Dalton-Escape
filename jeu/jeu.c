@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "JE/JE.h"
+#include "jeu/jeu.h"
 
-void JE_ajout_nouveau(JE *ctx, GtkWindow *fen) {
+void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen) {
     GtkWidget *gui;
     GdkGeometry hints;
 

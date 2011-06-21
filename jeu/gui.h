@@ -1,5 +1,5 @@
-#ifndef _JE_GUI_H
-#define _JE_GUI_H
+#ifndef _GUI_H
+#define _GUI_H
 
 // éléments de l'interface graphique
 typedef struct {
@@ -14,9 +14,9 @@ typedef struct {
                     GtkWidget *bt_sortie;
                     GtkWidget *lbl_J2, *score_J2;
             GtkWidget *lbl_statut;
-} JE_gui;
+} GUI;
 
-GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr);
+GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr);
 
 #endif
 

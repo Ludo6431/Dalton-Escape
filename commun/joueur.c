@@ -3,9 +3,9 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-#include "JE/joueur.h"
+#include "commun/joueur.h"
 
-void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
+void joueur_init(JOUEUR *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     GtkWidget *dialog;
     GtkWidget *content_area;
         GtkWidget *table;
@@ -70,11 +70,11 @@ void joueur_init(JE_joueur *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
     gtk_widget_destroy(dialog);
 }
 
-int joueur_sauver(JE_joueur *pl, FILE *fd) {
+int joueur_sauvegarder(JOUEUR *pl, FILE *fd) {
     return fwrite(pl, sizeof(*pl), 1, fd)!=1;
 }
 
-int joueur_charger(JE_joueur *pl, FILE *fd) {
+int joueur_charger(JOUEUR *pl, FILE *fd) {
     return fread(pl, sizeof(*pl), 1, fd)!=1;
 }
 

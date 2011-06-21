@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "JE/joueur.h"
-#include "JE/jeu.h"
+#include "commun/joueur.h"
+#include "libevasion/evasion.h"
 
-#include "JE/gui_action.h"
+#include "jeu/gui_action.h"
 
 enum {
     TARGET_PAWN
@@ -16,9 +16,8 @@ static GtkTargetEntry target_list[] = {
     { "PAWN",    0, TARGET_PAWN }
 };
 
-static void maj_appar_bouton(JE *ctx, GtkWidget *bt, case_t c) {
+static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
     GtkWidget *image = NULL;
-    etat_t e = jeu_etat(&ctx->jeu);
 
     // changement de style
     if(c&CASE_GRISE)
@@ -28,7 +27,7 @@ static void maj_appar_bouton(JE *ctx, GtkWidget *bt, case_t c) {
 
     // changement d'état
     if(c&CASE_PEUTCLIQUER) {
-        if(e&ETAT_ATTENTEBOUGER) {
+        if(ctx->jeu.etat&ETAT_ATTENTEBOUGER) {
             gtk_drag_dest_set(
                 bt,                         /* widget that will accept a drop */
                 GTK_DEST_DEFAULT_MOTION     /* default actions for dest on DnD */
@@ -74,14 +73,12 @@ static void maj_appar_bouton(JE *ctx, GtkWidget *bt, case_t c) {
     gtk_button_set_image(GTK_BUTTON(bt), image);
 }
 
-void maj_etat(JE *ctx) {
+void maj_etat(JEU *ctx) {
     char buffer[32];
     int i, j;
 
     // mise à jour du label d'état
-    etat_t e = jeu_etat(&ctx->jeu);
-
-    switch(ETAT_ETAT(e)) {
+    switch(ETAT_ETAT(ctx->jeu.etat)) {
     case ETAT_J1:
         sprintf(buffer, "Au tour de %s", ctx->J1.pseudo);
         break;
@@ -97,7 +94,7 @@ void maj_etat(JE *ctx) {
         ctx->J2.score++;
         break;
     default:
-        sprintf(buffer, "Autre état : %d", e);
+        sprintf(buffer, "Autre état : %d", ctx->jeu.etat);
         break;
     }
 
@@ -119,7 +116,7 @@ void maj_etat(JE *ctx) {
     maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
 }
 
-static void _w2xy(GtkWidget *w, JE *ctx, int *x, int *y) {
+static void _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
     int i, j;
 
     if(w == ctx->gui.bt_cellules)
@@ -135,7 +132,7 @@ static void _w2xy(GtkWidget *w, JE *ctx, int *x, int *y) {
                 }
 }
 
-void debut_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
+void debut_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
     char *stock = NULL;
     gint w, h;
     int x, y;
@@ -148,7 +145,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
     _w2xy(widget, ctx, &x, &y);
 
     // on renseigne le jeu du déplacement
-    jeu_debut_depl(&ctx->jeu, x, y);
+    ev_debut_depl(&ctx->jeu, x, y);
 
     // on met à jour l'IHM
     maj_etat(ctx);
@@ -157,7 +154,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
     // on configure le drag&drop
     gtk_icon_size_lookup(GTK_ICON_SIZE_DND, &w, &h);
 
-    switch(ETAT_ETAT(jeu_etat(&ctx->jeu))) {
+    switch(ETAT_ETAT(ctx->jeu.etat)) {
     case ETAT_J1:
         stock = "case-J1";
         break;
@@ -173,7 +170,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
     gtk_button_set_image(GTK_BUTTON(widget), NULL);
 }
 
-gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, JE *ctx) {
+gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, JEU *ctx) {
     GdkAtom target_type;
 
     // debug
@@ -200,7 +197,7 @@ gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, g
     return TRUE;
 }
 
-void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, JE *ctx) {
+void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
@@ -231,7 +228,7 @@ void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectio
     }
 }
 
-void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, JE *ctx) {
+void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
@@ -254,35 +251,35 @@ void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint
     gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
-void fin_drag(GtkWidget *widget, GdkDragContext *context, JE *ctx) {
+void fin_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
 
     if(context->action) { // le glisser-déposer a bien fonctionné
         // on effectue l'action
-        jeu_fin_depl(&ctx->jeu, ctx->dx, ctx->dy);
+        ev_fin_depl(&ctx->jeu, ctx->dx, ctx->dy);
     }
     else {
         // on en renseigne le jeu
-        jeu_annuler_depl(&ctx->jeu);
+        ev_annuler_depl(&ctx->jeu);
     }
 
     // on màj l'IHM
     maj_etat(ctx);
 }
 
-void action_pion(GtkWidget *widget, JE *ctx) {
+void action_pion(GtkWidget *widget, JEU *ctx) {
     int x, y;
 
     // on cherche le bouton qui a déclenché ça
     _w2xy(widget, ctx, &x, &y);
 
     // on fait l'action demandée en fonction de si on vient de choisir le pion ou sa destination
-    if(jeu_etat(&ctx->jeu)&ETAT_ATTENTEBOUGER)
-        jeu_fin_depl(&ctx->jeu, x, y);
+    if(ctx->jeu.etat&ETAT_ATTENTEBOUGER)
+        ev_fin_depl(&ctx->jeu, x, y);
     else
-        jeu_debut_depl(&ctx->jeu, x, y);
+        ev_debut_depl(&ctx->jeu, x, y);
 
     // et on remet à jour l'IHM pour refléter les modifs
     maj_etat(ctx);

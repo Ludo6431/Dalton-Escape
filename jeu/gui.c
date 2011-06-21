@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "JE/gui_menu.h"
-#include "JE/gui_action.h"
+#include "jeu/gui_menu.h"
+#include "jeu/gui_action.h"
 
-#include "JE/gui.h"
+#include "jeu/gui.h"
 
 static inline void _init_case(GtkWidget *bt, void *user_ptr) {
     // pour le mode de déplacement: sélection source puis sélection départ
@@ -23,7 +23,7 @@ static inline void _init_case(GtkWidget *bt, void *user_ptr) {
 }
 
 // crée l'interface que l'on peut ajouter dans n'importe quel container
-GtkWidget *gui_init(JE_gui *gui, GtkWindow *fenpar, void *user_ptr) {
+GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
     int i;
     int j;
 

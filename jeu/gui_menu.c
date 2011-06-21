@@ -3,23 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "JE/joueur.h"
-#include "JE/jeu.h"
-#include "JE/gui_action.h"
+#include "commun/joueur.h"
+#include "libevasion/evasion.h"
+#include "jeu/gui_action.h"
 
-#include "JE/gui_menu.h"
+#include "jeu/gui_menu.h"
 
 // prototypes des callbacks
-void    nouvelle_partie (GtkWidget *w, JE *ctx);
-void    sauver_partie   (GtkWidget *w, JE *ctx);
-void    charger_partie  (GtkWidget *w, JE *ctx);
-void    quitter_partie  (GtkWidget *w, JE *ctx);
+void    nouvelle_partie     (GtkWidget *w, JEU *ctx);
+void    sauvegarder_partie  (GtkWidget *w, JEU *ctx);
+void    charger_partie      (GtkWidget *w, JEU *ctx);
+void    quitter_partie      (GtkWidget *w, JEU *ctx);
 
 static GtkActionEntry menu_entries[] = {
     /* name, stock id, label, accelerator, tooltip, callback */
     {"GameMenuAction", NULL, "_Game"},
     {"NewAction", GTK_STOCK_NEW, "_New", "<control>N", "Start new game", G_CALLBACK(nouvelle_partie)},
-    {"SaveAction", GTK_STOCK_SAVE_AS, "_Save", "<control>S", "Save game", G_CALLBACK(sauver_partie)},
+    {"SaveAction", GTK_STOCK_SAVE_AS, "_Save", "<control>S", "Save game", G_CALLBACK(sauvegarder_partie)},
     {"LoadAction", GTK_STOCK_OPEN, "L_oad", "<control>O", "Load saved game", G_CALLBACK(charger_partie)},
     {"QuitAction", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit game", G_CALLBACK(quitter_partie)},
 
@@ -42,7 +42,7 @@ GtkWidget *gui_menu_new(GtkWindow *fenpar, void *user_ptr) {
     menu_manager = gtk_ui_manager_new();
     gtk_ui_manager_insert_action_group(menu_manager, action_group, 0);
     error = NULL;
-    gtk_ui_manager_add_ui_from_file(menu_manager, "menu.ui", &error);
+    gtk_ui_manager_add_ui_from_file(menu_manager, "jeu_menu.ui", &error);
     if(error) {
         g_message("building menus failed: %s", error->message);
         g_error_free(error);
@@ -54,20 +54,20 @@ GtkWidget *gui_menu_new(GtkWindow *fenpar, void *user_ptr) {
 
 // -- les callbacks :
 
-void nouvelle_partie(GtkWidget *w, JE *ctx) {
+void nouvelle_partie(GtkWidget *w, JEU *ctx) {
     joueur_init(&ctx->J1, "Nouveau joueur", "Joueur 1", GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J1), ctx->J1.pseudo);
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J2), ctx->J2.pseudo);
 
-    jeu_nouvellepartie(&ctx->jeu);
+    ev_nouvellepartie(&ctx->jeu);
 
     maj_etat(ctx);
 }
 
 #define EXT_FICHIER ".esc"
 
-void sauver_partie(GtkWidget *w, JE *ctx) {
+void sauvegarder_partie(GtkWidget *w, JEU *ctx) {
     GtkWidget *dialog = gtk_file_chooser_dialog_new("Sauvegarder partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_SAVE,
         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
@@ -100,9 +100,9 @@ void sauver_partie(GtkWidget *w, JE *ctx) {
         // TODO: add header ?
 
         // ordre important
-        jeu_sauverpartie(&ctx->jeu, fd);
-        joueur_sauver(&ctx->J1, fd);
-        joueur_sauver(&ctx->J2, fd);
+        ev_sauvegarder(&ctx->jeu, fd);
+        joueur_sauvegarder(&ctx->J1, fd);
+        joueur_sauvegarder(&ctx->J2, fd);
 
         // TODO: append checksum ?
 
@@ -111,8 +111,8 @@ void sauver_partie(GtkWidget *w, JE *ctx) {
     gtk_widget_destroy (dialog);
 }
 
-void charger_partie(GtkWidget *w, JE *ctx) {
-    GtkWidget *dialog = gtk_file_chooser_dialog_new("Ouvrir partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_OPEN,
+void charger_partie(GtkWidget *w, JEU *ctx) {
+    GtkWidget *dialog = gtk_file_chooser_dialog_new("Charger partie", GTK_WINDOW(ctx->gui.fenetre), GTK_FILE_CHOOSER_ACTION_OPEN,
         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
         NULL
@@ -135,7 +135,7 @@ void charger_partie(GtkWidget *w, JE *ctx) {
         // TODO: verify checksum (and header ?)
 
         // ordre important
-        jeu_chargerpartie(&ctx->jeu, fd);
+        ev_charger(&ctx->jeu, fd);
         joueur_charger(&ctx->J1, fd);
         joueur_charger(&ctx->J2, fd);
 
@@ -147,7 +147,7 @@ void charger_partie(GtkWidget *w, JE *ctx) {
     maj_etat(ctx);
 }
 
-void quitter_partie(GtkWidget *w, JE *ctx) {
+void quitter_partie(GtkWidget *w, JEU *ctx) {
     gtk_main_quit();
 }
 

@@ -1,7 +1,9 @@
 .PHONY:all clean
 
-EXEC := evasion
-OBJS := main.o JE/JE.o JE/joueur.o JE/jeu.o JE/gui.o JE/gui_action.o JE/gui_menu.o JE/outils.o
+EXEC := dalton-escape
+OBJS := jeu.o jeu/jeu.o jeu/gui.o jeu/gui_action.o jeu/gui_menu.o
+
+OBJS += libevasion/evasion.o commun/joueur.o commun/outils.o
 
 CC = gcc
 CFLAGS = -Wall -g -I. `pkg-config gtk+-2.0 --cflags`

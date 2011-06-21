@@ -3,15 +3,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "JE/jeu.h"
+#include "libevasion/evasion.h"
 
-etat_t jeu_etat(JE_jeu *je) {
-    assert(je);
-
-    return je->etat;
-}
-
-void jeu_nouvellepartie(JE_jeu *je) {
+void ev_nouvellepartie(EV *je) {
     assert(je);
 
     je->nb_pions[0] = je->nb_pions[1] = 0;
@@ -60,7 +54,7 @@ void jeu_nouvellepartie(JE_jeu *je) {
 #define DANSSORT(x, y) ((y)==9)
 #define DANSPLAT(x, y) (DANSCELL(x, y) || DANSCOUR(x, y) || DANSSORT(x, y))
 
-case_t case_get(JE_jeu *je, int x, int y) {
+static case_t case_get(EV *je, int x, int y) {
     switch(y) {
     case -1:
         return je->part[0];
@@ -72,7 +66,7 @@ case_t case_get(JE_jeu *je, int x, int y) {
     }
 }
 
-void case_set(JE_jeu *je, int x, int y, case_t c) {
+static void case_set(EV *je, int x, int y, case_t c) {
     switch(y) {
     case -1:
         je->part[0] = c;
@@ -87,7 +81,7 @@ void case_set(JE_jeu *je, int x, int y, case_t c) {
     }
 }
 
-int freepath(JE_jeu *je, int sx, int sy, int dx, int dy) {
+static int freepath(EV *je, int sx, int sy, int dx, int dy) {
     assert(je);
     assert(DANSCOUR(sx, sy) && (DANSCOUR(dx, dy) || DANSSORT(dx, dy)));
 
@@ -126,7 +120,7 @@ int freepath(JE_jeu *je, int sx, int sy, int dx, int dy) {
     return 0;
 }
 
-int canmove(JE_jeu *je, int sx, int sy, int dx, int dy) {
+static int canmove(EV *je, int sx, int sy, int dx, int dy) {
     assert(je);
     assert(sy!=9);  // on ne peut pas partir de la sortie
 
@@ -154,7 +148,7 @@ int canmove(JE_jeu *je, int sx, int sy, int dx, int dy) {
     return 0;
 }
 
-void resetcliquer(JE_jeu *je) {
+static void resetcliquer(EV *je) {
     int i, j;
 
     je->part[0] &= ~CASE_PEUTCLIQUER;
@@ -164,7 +158,7 @@ void resetcliquer(JE_jeu *je) {
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-void jeu_debut_depl(JE_jeu *je, int sx, int sy) {    // choix de la source
+void ev_debut_depl(EV *je, int sx, int sy) {    // choix de la source
     assert(je);
     assert(!(je->etat & ETAT_ATTENTEBOUGER));
     assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);
@@ -194,11 +188,11 @@ void jeu_debut_depl(JE_jeu *je, int sx, int sy) {    // choix de la source
         je->part[1] |= CASE_PEUTCLIQUER;
 }
 
-inline void jeu_annuler_depl(JE_jeu *je) {
-    jeu_fin_depl(je, je->sx, je->sy);   // c'est comme si on bougeait là où on était
+inline void ev_annuler_depl(EV *je) {
+    ev_fin_depl(je, je->sx, je->sy);   // c'est comme si on bougeait là où on était
 }
 
-void jeu_fin_depl(JE_jeu *je, int dx, int dy) {    // choix de la destination
+void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
     assert(je);
     assert(je->etat & ETAT_ATTENTEBOUGER);
     assert(ETAT_ETAT(je->etat)==ETAT_J1 || ETAT_ETAT(je->etat)==ETAT_J2);
@@ -264,11 +258,11 @@ update:
     je->part[1] &= ~CASE_PEUTCLIQUER;
 }
 
-int jeu_sauverpartie(JE_jeu *je, FILE *fd) {
+int ev_sauvegarder(EV *je, FILE *fd) {
     return fwrite(je, sizeof(*je), 1, fd)!=1;
 }
 
-int jeu_chargerpartie(JE_jeu *je, FILE *fd) {
+int ev_charger(EV *je, FILE *fd) {
     return fread(je, sizeof(*je), 1, fd)!=1;
 }
 
