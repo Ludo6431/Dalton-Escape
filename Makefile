@@ -31,9 +31,9 @@ clean:
 %.o:%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(EXEC_JEU):$(OBJS_JEU) $(OBJS_COMMUN)
+$(EXEC_JEU):$(OBJS_JEU)
 	$(CC) $(LDFLAGS) -o $@ $^
 
-$(EXEC_EDITEUR):$(OBJS_EDITEUR) $(OBJS_COMMUN)
+$(EXEC_EDITEUR):$(OBJS_EDITEUR)
 	$(CC) $(LDFLAGS) -o $@ $^
 
