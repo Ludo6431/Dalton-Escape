@@ -54,11 +54,17 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
             gui->table = gtk_table_new(13, 9, TRUE);
             gtk_container_add(GTK_CONTAINER(gui->aframe), gui->table);
 
-                // cellules
-                gui->bt_cellules = gtk_button_new_with_label("Cellules");
-                gtk_table_attach(GTK_TABLE(gui->table), gui->bt_cellules, 0, 9, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-                _init_case(gui->bt_cellules, user_ptr);
-                gtk_widget_show(gui->bt_cellules);
+                // cellules J1
+                gui->bt_cellules[0] = gtk_button_new_with_label("Cellules J1");
+                gtk_table_attach(GTK_TABLE(gui->table), gui->bt_cellules[0], 0, 4, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                _init_case(gui->bt_cellules[0], user_ptr);
+                gtk_widget_show(gui->bt_cellules[0]);
+
+                // cellules J2
+                gui->bt_cellules[1] = gtk_button_new_with_label("Cellules J2");
+                gtk_table_attach(GTK_TABLE(gui->table), gui->bt_cellules[1], 5, 9, 0, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                _init_case(gui->bt_cellules[1], user_ptr);
+                gtk_widget_show(gui->bt_cellules[1]);
 
                 // 9*9 boutons pour les cases
                 for(j=0; j<9; j++) {
@@ -75,7 +81,7 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
                 gtk_table_attach(GTK_TABLE(gui->table), gui->lbl_J1, 0, 2, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                 gtk_widget_show(gui->lbl_J1);
 
-                gui->score_J1 = gtk_entry_new();
+                gui->score_J1 = gtk_entry_new();    // TODO: est-ce utile de garder le score ? => modifiable ?
                 gtk_entry_set_editable(GTK_ENTRY(gui->score_J1), FALSE);
                 gtk_entry_set_width_chars(GTK_ENTRY(gui->score_J1), 2);
                 gtk_entry_set_alignment(GTK_ENTRY(gui->score_J1), 0.5);

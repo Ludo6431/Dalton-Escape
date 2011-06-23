@@ -8,7 +8,7 @@ typedef struct {
             GtkWidget *menu;
             GtkWidget *aframe;
                 GtkWidget *table;
-                    GtkWidget *bt_cellules;
+                    GtkWidget *bt_cellules[2];
                     GtkWidget *bts_cases[9][9];
                     GtkWidget *lbl_J1, *score_J1;
                     GtkWidget *bt_sortie;

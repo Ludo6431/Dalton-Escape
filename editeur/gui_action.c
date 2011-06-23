@@ -5,6 +5,7 @@
 
 #include "commun/joueur.h"
 #include "libevasion/evasion.h"
+#include "libevasion/evasion_editeur.h"
 
 #include "editeur/gui_action.h"
 
@@ -74,40 +75,14 @@ static void maj_appar_bouton(EDIT *ctx, GtkWidget *bt, case_t c) {
 }
 
 void maj_etat(EDIT *ctx) {
-    char buffer[32];
     int i, j;
 
-    // mise à jour du label d'état
-    switch(ETAT_ETAT(ctx->jeu.etat)) {
-    case ETAT_J1:
-        sprintf(buffer, "Au tour de %s", ctx->J1.pseudo);
-        break;
-    case ETAT_J2:
-        sprintf(buffer, "Au tour de %s", ctx->J2.pseudo);
-        break;
-    case ETAT_J1WIN:
-        sprintf(buffer, "%s gagne", ctx->J1.pseudo);
-        ctx->J1.score++;
-        break;
-    case ETAT_J2WIN:
-        sprintf(buffer, "%s gagne", ctx->J2.pseudo);
-        ctx->J2.score++;
-        break;
-    default:
-        sprintf(buffer, "Autre état : %d", ctx->jeu.etat);
-        break;
-    }
-
-    gtk_label_set_text(GTK_LABEL(ctx->gui.lbl_statut), buffer);
-
-    // mise à jour des labels de scores
-    sprintf(buffer, "%d", ctx->J1.score);
-    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J1), buffer);
-    sprintf(buffer, "%d", ctx->J2.score);
-    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J2), buffer);
+    // on demande la mise à jour des déplacements possibles
+    eved_maj_depl(&ctx->jeu);
 
     // mise à jour du plateau
-    maj_appar_bouton(ctx, ctx->gui.bt_cellules, ctx->jeu.part[0]);
+    maj_appar_bouton(ctx, ctx->gui.bt_cellules[0], ctx->jeu.part[0]);
+    maj_appar_bouton(ctx, ctx->gui.bt_cellules[1], ctx->jeu.part[0]);
 
     for(j=0; j<9; j++)
         for(i=0; i<9; i++)
@@ -116,20 +91,33 @@ void maj_etat(EDIT *ctx) {
     maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
 }
 
-static void _w2xy(GtkWidget *w, EDIT *ctx, int *x, int *y) {
+static int _w2xy(GtkWidget *w, EDIT *ctx, int *x, int *y) {
     int i, j;
 
-    if(w == ctx->gui.bt_cellules)
+    if(w == ctx->gui.bt_cellules[0]) {
+        *x = 0;
         *y = -1;
-    else if(w == ctx->gui.bt_sortie)
+        return 0;
+    }
+    else if(w == ctx->gui.bt_cellules[1]) {
+        *x = 1;
+        *y = -1;
+        return 0;
+    }
+    else if(w == ctx->gui.bt_sortie) {
         *y = 9;
+        return 0;
+    }
     else    // evil loop
         for(j=0; j<9; j++)
             for(i=0; i<9; i++)
                 if(w == ctx->gui.bts_cases[i][j]) {
                     *x = i;
                     *y = j;
+                    return 0;
                 }
+
+    return 1;   // le bouton n'est pas ici
 }
 
 void debut_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
@@ -145,7 +133,7 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
     _w2xy(widget, ctx, &x, &y);
 
     // on renseigne le jeu du déplacement
-    ev_debut_depl(&ctx->jeu, x, y);
+    eved_debut_depl(&ctx->jeu, x, y);
 
     // on met à jour l'IHM
     maj_etat(ctx);
@@ -160,6 +148,9 @@ void debut_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
         break;
     case ETAT_J2:
         stock = "case-J2";
+        break;
+    case ETAT_GARDIEN:
+        stock = "case-gardien";
         break;
     default:
         break;
@@ -197,12 +188,14 @@ gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, g
     return TRUE;
 }
 
+#define DONNEE_DRAG "deplacement_editeur"
+
 void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, EDIT *ctx) {
+    const gchar *pawn_data = DONNEE_DRAG;
+
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
-
-    const gchar *pawn_data = "deplacement";
 
     g_assert(selection_data!=NULL);
     g_assert(target_type==TARGET_PAWN);
@@ -229,12 +222,15 @@ void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectio
 }
 
 void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, EDIT *ctx) {
+    gboolean success = TRUE;
+
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
 
     // on récupère les coordonnées de la destination
-    _w2xy(widget, ctx, &ctx->dx, &ctx->dy);
+    if(_w2xy(widget, ctx, &ctx->dx, &ctx->dy))
+        success = FALSE;
 
     /* Deal with what we are given from source */
     if(selection_data && selection_data->length>=0) {
@@ -242,13 +238,15 @@ void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint
         switch(target_type) {
             case TARGET_PAWN:
 //                g_print("received:%s\n", (gchar*)selection_data->data);
+                if(strcmp((char *)selection_data->data, DONNEE_DRAG))
+                    success = FALSE;
                 break;
             default:
                 break;
         }
     }
 
-    gtk_drag_finish(context, TRUE, FALSE, time);
+    gtk_drag_finish(context, success, FALSE, time);
 }
 
 void fin_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
@@ -258,11 +256,11 @@ void fin_drag(GtkWidget *widget, GdkDragContext *context, EDIT *ctx) {
 
     if(context->action) { // le glisser-déposer a bien fonctionné
         // on effectue l'action
-        ev_fin_depl(&ctx->jeu, ctx->dx, ctx->dy);
+        eved_fin_depl(&ctx->jeu, ctx->dx, ctx->dy);
     }
     else {
         // on en renseigne le jeu
-        ev_annuler_depl(&ctx->jeu);
+        eved_annuler_depl(&ctx->jeu);
     }
 
     // on màj l'IHM
@@ -277,9 +275,9 @@ void action_pion(GtkWidget *widget, EDIT *ctx) {
 
     // on fait l'action demandée en fonction de si on vient de choisir le pion ou sa destination
     if(ctx->jeu.etat&ETAT_ATTENTEBOUGER)
-        ev_fin_depl(&ctx->jeu, x, y);
+        eved_fin_depl(&ctx->jeu, x, y);
     else
-        ev_debut_depl(&ctx->jeu, x, y);
+        eved_debut_depl(&ctx->jeu, x, y);
 
     // et on remet à jour l'IHM pour refléter les modifs
     maj_etat(ctx);

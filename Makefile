@@ -7,6 +7,7 @@ OBJS_JEU := jeu.o jeu/jeu.o jeu/gui.o jeu/gui_action.o jeu/gui_menu.o
 # editeur
 EXEC_EDITEUR := dalton-escape-editeur
 OBJS_EDITEUR := editeur.o editeur/editeur.o editeur/gui.o editeur/gui_action.o editeur/gui_menu.o
+OBJS_EDITEUR += libevasion/evasion_editeur.o
 
 # en commun
 OBJS_COMMUN := libevasion/evasion.o commun/joueur.o commun/outils.o commun/io.o

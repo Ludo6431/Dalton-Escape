@@ -77,6 +77,9 @@ void maj_etat(JEU *ctx) {
     char buffer[32];
     int i, j;
 
+    // on demande la mise à jour des déplacements possibles
+    ev_maj_depl(&ctx->jeu);
+
     // mise à jour du label d'état
     switch(ETAT_ETAT(ctx->jeu.etat)) {
     case ETAT_J1:
@@ -116,20 +119,27 @@ void maj_etat(JEU *ctx) {
     maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
 }
 
-static void _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
+static int _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
     int i, j;
 
-    if(w == ctx->gui.bt_cellules)
+    if(w == ctx->gui.bt_cellules) {
         *y = -1;
-    else if(w == ctx->gui.bt_sortie)
+        return 0;
+    }
+    else if(w == ctx->gui.bt_sortie) {
         *y = 9;
+        return 0;
+    }
     else    // evil loop
         for(j=0; j<9; j++)
             for(i=0; i<9; i++)
                 if(w == ctx->gui.bts_cases[i][j]) {
                     *x = i;
                     *y = j;
+                    return 0;
                 }
+
+    return 1;   // le bouton n'est pas ici
 }
 
 void debut_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {
@@ -197,12 +207,14 @@ gboolean drop_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, g
     return TRUE;
 }
 
+#define DONNEE_DRAG "deplacement"
+
 void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
+    const gchar *pawn_data = DONNEE_DRAG;
+
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
-
-    const gchar *pawn_data = "deplacement";
 
     g_assert(selection_data!=NULL);
     g_assert(target_type==TARGET_PAWN);
@@ -229,12 +241,15 @@ void demande_donnee_drag(GtkWidget *widget, GdkDragContext *context, GtkSelectio
 }
 
 void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *selection_data, guint target_type, guint time, JEU *ctx) {
+    gboolean success = TRUE;
+
     // debug
 /*    const gchar *name = gtk_widget_get_name(widget);*/
 /*    g_print("%s: %s\n", name, __func__);*/
 
     // on récupère les coordonnées de la destination
-    _w2xy(widget, ctx, &ctx->dx, &ctx->dy);
+    if(_w2xy(widget, ctx, &ctx->dx, &ctx->dy))
+        success = FALSE;
 
     /* Deal with what we are given from source */
     if(selection_data && selection_data->length>=0) {
@@ -242,13 +257,15 @@ void recoit_donnee_drag(GtkWidget *widget, GdkDragContext *context, gint x, gint
         switch(target_type) {
             case TARGET_PAWN:
 //                g_print("received:%s\n", (gchar*)selection_data->data);
+                if(strcmp((char *)selection_data->data, DONNEE_DRAG))
+                    success = FALSE;
                 break;
             default:
                 break;
         }
     }
 
-    gtk_drag_finish(context, TRUE, FALSE, time);
+    gtk_drag_finish(context, success, FALSE, time);
 }
 
 void fin_drag(GtkWidget *widget, GdkDragContext *context, JEU *ctx) {

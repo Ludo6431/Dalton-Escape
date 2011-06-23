@@ -29,7 +29,7 @@ static GtkActionEntry menu_entries[] = {
     {"SettingsAction", GTK_STOCK_PREFERENCES, "Settings", NULL, "Save game", NULL},
 
     {"HelpMenuAction", NULL, "_Help"},
-    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contents", "F1", "Manual of the game", NULL},
+    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contents", "F1", "Manual of the editor", NULL},
     {"AboutAction", GTK_STOCK_ABOUT, "About", NULL, "About the game", NULL},
 };
 
@@ -43,7 +43,7 @@ GtkWidget *gui_menu_new(GtkWindow *fenpar, void *user_ptr) {
     menu_manager = gtk_ui_manager_new();
     gtk_ui_manager_insert_action_group(menu_manager, action_group, 0);
     error = NULL;
-    gtk_ui_manager_add_ui_from_file(menu_manager, "jeu_menu.ui", &error);
+    gtk_ui_manager_add_ui_from_file(menu_manager, "editeur_menu.ui", &error);
     if(error) {
         g_message("building menus failed: %s", error->message);
         g_error_free(error);
@@ -67,6 +67,9 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
 }
 
 void sauvegarder_partie(GtkWidget *w, EDIT *ctx) {
+    // on fait attention à ce que la partie sauvegardée soit valide
+    // TODO: demander quel joueur commencera
+
     // on sauvegarde la partie
     io_sauvegarder(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &ctx->jeu, &ctx->J1, &ctx->J2);
 }
