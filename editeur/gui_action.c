@@ -112,14 +112,12 @@ void maj_etat(EDIT *ctx) {
     gtk_label_set_text(GTK_LABEL(ctx->gui.lbl_statut), buffer);
 
     // mise à jour du plateau
-    maj_appar_bouton(ctx, ctx->gui.bt_cellules[0], ctx->jeu.part[0]);
-    maj_appar_bouton(ctx, ctx->gui.bt_cellules[1], ctx->jeu.part[0]);
+    maj_appar_bouton(ctx, ctx->gui.bt_cellules[0], ctx->jeu.part[0]);   // cellules J1
+    maj_appar_bouton(ctx, ctx->gui.bt_cellules[1], ctx->jeu.part[1]);   // cellules J2
 
-    for(j=0; j<9; j++)
+    for(j=0; j<9; j++)  // cour
         for(i=0; i<9; i++)
             maj_appar_bouton(ctx, ctx->gui.bts_cases[i][j], ctx->jeu.tab[i][j]);
-
-    maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
 }
 
 static int _w2xy(GtkWidget *w, EDIT *ctx, int *x, int *y) {
@@ -135,7 +133,7 @@ static int _w2xy(GtkWidget *w, EDIT *ctx, int *x, int *y) {
         *y = -1;
         return 0;
     }
-    else if(w == ctx->gui.bt_sortie) {
+    else if(w == ctx->gui.bt_sortie) {  // est inutile dans l'éditeur
         *y = 9;
         return 0;
     }

@@ -32,9 +32,11 @@ typedef enum {
 #define ETAT2CASE(e) ((case_t)CLAMP(ETAT_J1, ETAT_ETAT(e), ETAT_GARDIEN))
 
 typedef struct {
-    int nb_pions[2];    // le nb de pions qui sont passés pour chaque joueur
     etat_t etat;        // état en cours
+
     int joueur_debut;   // joueur qui commence
+    int nb_p_cell[2];   // le nb de prisonniers qui sont en cellules pour chaque joueur
+    int nb_p_sort[2];   // le nb de prisonniers qui sont passés pour chaque joueur
 
     int sx, sy;         // position du pion sélectionné
 
@@ -61,11 +63,14 @@ int         ev_charger          (EV *je, FILE *fd);
 static inline case_t ev_case_get(EV *je, int x, int y) {
     switch(y) {
     case -1:
+        if(x == 1)  // utilisé pour l'éditeur
+            return je->part[1];
+
         return je->part[0];
     case 9:
         return je->part[1];
     default:
-//        assert(EV_DANSCOUR(x, y));
+        assert(EV_DANSCOUR(x, y));
         return je->tab[x][y];
     }
 }
@@ -79,7 +84,7 @@ static inline void ev_case_set(EV *je, int x, int y, case_t c) {
         je->part[1] = c;
         break;
     default:
-//        assert(EV_DANSCOUR(x, y));
+        assert(EV_DANSCOUR(x, y));
         je->tab[x][y] = c;
         break;
     }

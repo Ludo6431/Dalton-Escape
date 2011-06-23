@@ -8,18 +8,19 @@
 void ev_nouvellepartie(EV *je) {
     assert(je);
 
-    je->nb_pions[0] = je->nb_pions[1] = 0;
+    je->nb_p_cell[0] = je->nb_p_cell[1] = 4;
+    je->nb_p_sort[0] = je->nb_p_sort[1] = 0;
 
     je->etat = (je->joueur_debut?ETAT_J2:ETAT_J1) | ETAT_ENREGCOUP;
 
     je->joueur_debut^=1;
 
     int i, j;
-    je->part[0] = 0;
+    je->part[0] = CASE_LIBRE;
     for(j=0; j<9; j++)
         for(i=0; i<9; i++)
-            je->tab[i][j] = 0;
-    je->part[1] = 0;
+            je->tab[i][j] = CASE_LIBRE;
+    je->part[1] = CASE_LIBRE;
 
     int tab_gardiens[8][2] = {  // position (x, y) initiale de chaque gardien
         {0, 1},
@@ -144,7 +145,8 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
 
     int joueur = ETAT_ETAT(je->etat)==ETAT_J1?0:1;  // joueur qui vient de bouger un pion
 
-    if(je->sy == dy && (dy == -1 || je->sx == dx || dy == 9)) {  // le joueur annule son déplacement => c'est encore à lui de jouer
+    // le joueur annule son déplacement => c'est encore à lui de jouer
+    if(je->sy == dy && (dy == -1 || je->sx == dx || dy == 9)) {
         je->etat &= ~ETAT_ATTENTEBOUGER; // on n'est plus dans l'attente de sélection de la destination
         return;    // on ne change pas de joueur
     }
@@ -152,8 +154,21 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
     // on enlève le pion de là où il était
     ev_case_set(je, je->sx, je->sy, (ev_case_get(je, je->sx, je->sy)&~CASE_MASQTYPE) | CASE_LIBRE);
 
-    if(EV_DANSSORT(dx, dy)) {   // le joueur a passé un pion dans la sortie
-        je->nb_pions[joueur]++;
+    // on diminue le nombre de prisonniers en cellules quand on en sort un
+    if(EV_DANSCELL(je->sx, je->sy)) {
+        assert(je->nb_p_cell[joueur]>0);
+        je->nb_p_cell[joueur]--;
+    }
+
+    // on augmente le nombre de prisonniers en cellules quand on en remet un
+    if(EV_DANSCELL(dx, dy)) {
+        assert(je->nb_p_cell[joueur]<4);
+        je->nb_p_cell[joueur]++;
+    }
+
+    // le joueur a passé un pion dans la sortie
+    if(EV_DANSSORT(dx, dy)) {
+        je->nb_p_sort[joueur]++;
 
         int i, gx, ligne = (((unsigned)rand())%8)+1, dir = ((unsigned)rand())&1;
 
@@ -167,7 +182,7 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
         je->tab[dir?8:0][ligne] |= CASE_GARDIEN;
     }
 
-    if(je->nb_pions[joueur]==3) {   // on vérifie si ce déplacement lui permet de gagner
+    if(je->nb_p_sort[joueur]>=3) {   // on vérifie si ce déplacement lui permet de gagner
         je->etat = (joueur?ETAT_J2WIN:ETAT_J1WIN) | ETAT_ENREGCOUP;
         return;
     }
@@ -218,7 +233,10 @@ void ev_maj_depl(EV *je) {
     else {  // choix de la source
         int joueur = ETAT_ETAT(je->etat)==ETAT_J1?0:1;  // joueur qui va jouer
 
-        je->part[0] |= CASE_PEUTCLIQUER;    // TODO : vérifier le nombre de pions restant pour le joueur qui va jouer (il faut stocker ça qque part)
+        if(je->nb_p_cell[joueur]>0)
+            je->part[0] |= CASE_PEUTCLIQUER;
+        else
+            je->part[0] &= ~CASE_PEUTCLIQUER;
 
         for(j=0; j<9; j++)
             for(i=0; i<9; i++) {
