@@ -80,6 +80,13 @@ void maj_etat(JEU *ctx) {
     // on demande la mise à jour des déplacements possibles
     ev_maj_depl(&ctx->jeu);
 
+    // on empile le contexte actuel si un coup vient de se finir
+    if(ctx->jeu.etat&ETAT_ENREGCOUP) {
+        ctx->jeu.etat &= ~ETAT_ENREGCOUP;   // acknowledge
+
+        jeu_empile_coup(ctx, &ctx->jeu);
+    }
+
     // mise à jour du label d'état
     switch(ETAT_ETAT(ctx->jeu.etat)) {
     case ETAT_J1:

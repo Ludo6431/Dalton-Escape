@@ -24,7 +24,8 @@ typedef enum {
     ETAT_GARDIEN        = 3,
     ETAT_J1WIN          = 4,
     ETAT_J2WIN          = 5,
-    ETAT_ATTENTEBOUGER  = BIT(3)
+    ETAT_ATTENTEBOUGER  = BIT(3),
+    ETAT_ENREGCOUP      = BIT(4)
 } etat_t;
 
 #define CASE2ETAT(c) ((etat_t)CLAMP(CASE_J1, CASE_TYPE(c), CASE_GARDIEN))

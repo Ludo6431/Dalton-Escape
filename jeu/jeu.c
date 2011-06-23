@@ -19,3 +19,18 @@ void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen) {
     gtk_window_set_geometry_hints(GTK_WINDOW(fen), NULL, &hints, GDK_HINT_ASPECT);
 }
 
+void jeu_empile_coup(JEU *ctx, EV *jeu) {
+    ctx->pile_coups = g_slist_prepend(ctx->pile_coups, g_slice_dup(EV, jeu));
+}
+
+EV* jeu_depile_coup(JEU *ctx) {
+    EV *ret = NULL;
+
+    if(ctx->pile_coups) {
+        ret = (EV *)ctx->pile_coups->data;
+        ctx->pile_coups = g_slist_remove(ctx->pile_coups, ret); // remove the first element
+    }
+
+    return ret;
+}
+

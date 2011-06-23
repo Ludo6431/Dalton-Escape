@@ -16,11 +16,14 @@ typedef struct {
 
     // l'état du jeu
     EV jeu;
+    GSList *pile_coups; // pour annuler les derniers coups
 
     // fichier où la partie est sauvegardée
     char *filename;
 } JEU;
 
-void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen);
+void    jeu_ajout_nouveau   (JEU *ctx, GtkWindow *fen);
+void    jeu_empile_coup     (JEU *ctx, EV *jeu);
+EV*     jeu_depile_coup     (JEU *ctx);
 
 #endif

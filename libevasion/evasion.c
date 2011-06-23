@@ -10,7 +10,7 @@ void ev_nouvellepartie(EV *je) {
 
     je->nb_pions[0] = je->nb_pions[1] = 0;
 
-    je->etat = je->joueur_debut?ETAT_J2:ETAT_J1;
+    je->etat = (je->joueur_debut?ETAT_J2:ETAT_J1) | ETAT_ENREGCOUP;
 
     je->joueur_debut^=1;
 
@@ -124,6 +124,9 @@ void ev_debut_depl(EV *je, int sx, int sy) {    // choix de la source
     // on passe en état attente de sélection de destination
     je->etat |= ETAT_ATTENTEBOUGER;
 
+    // si c'est pas fait, c'est trop tard maintenant !
+    je->etat &= ~ETAT_ENREGCOUP;
+
     // on sauvegarde le point de départ
     je->sx = sx;
     je->sy = sy;
@@ -153,7 +156,7 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
         je->nb_pions[joueur]++;
 
     if(je->nb_pions[joueur]==3) {   // on vérifie si ce déplacement lui permet de gagner
-        je->etat = joueur?ETAT_J2WIN:ETAT_J1WIN;
+        je->etat = (joueur?ETAT_J2WIN:ETAT_J1WIN) | ETAT_ENREGCOUP;
         return;
     }
 
@@ -178,7 +181,7 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
     }
 
     // au joueur suivant (et on reset aussi les flags (ETAT_ATTENTEBOUER, ...) stockés dans l'état)
-    je->etat = joueur?ETAT_J1:ETAT_J2;
+    je->etat = (joueur?ETAT_J1:ETAT_J2) | ETAT_ENREGCOUP;
 }
 
 void ev_maj_depl(EV *je) {

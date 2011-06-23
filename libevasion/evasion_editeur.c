@@ -78,6 +78,9 @@ void eved_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
 
     // on reset les flags (ETAT_ATTENTEBOUER, ...) stockés dans l'état
     je->etat &= ~ETAT_ATTENTEBOUGER;
+
+    // on signale qu'un coup vient de se finir
+    je->etat |= ETAT_ENREGCOUP;
 }
 
 void eved_maj_depl(EV *je) {

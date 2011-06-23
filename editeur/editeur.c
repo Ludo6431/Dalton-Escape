@@ -19,3 +19,19 @@ void editeur_ajout_nouveau(EDIT *ctx, GtkWindow *fen) {
     gtk_window_set_geometry_hints(GTK_WINDOW(fen), NULL, &hints, GDK_HINT_ASPECT);
 }
 
+void editeur_empile_coup(EDIT *ctx, EV *jeu) {
+printf(".\n");
+    ctx->pile_coups = g_slist_prepend(ctx->pile_coups, g_slice_dup(EV, jeu));
+}
+
+EV* editeur_depile_coup(EDIT *ctx) {
+    EV *ret = NULL;
+
+    if(ctx->pile_coups) {
+        ret = (EV *)ctx->pile_coups->data;
+        ctx->pile_coups = g_slist_remove(ctx->pile_coups, ret); // remove the first element
+    }
+
+    return ret;
+}
+

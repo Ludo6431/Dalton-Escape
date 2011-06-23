@@ -81,6 +81,13 @@ void maj_etat(EDIT *ctx) {
     // on demande la mise à jour des déplacements possibles
     eved_maj_depl(&ctx->jeu);
 
+    // on empile le contexte actuel si un coup vient de se finir
+    if(ctx->jeu.etat&ETAT_ENREGCOUP) {
+        ctx->jeu.etat &= ~ETAT_ENREGCOUP;   // acknowledge
+
+        editeur_empile_coup(ctx, &ctx->jeu);
+    }
+
     // mise à jour du label d'état
     if(ctx->jeu.etat&ETAT_ATTENTEBOUGER) {
         strcpy(buffer, "Choisir la destination du ");
