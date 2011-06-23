@@ -75,10 +75,34 @@ static void maj_appar_bouton(EDIT *ctx, GtkWidget *bt, case_t c) {
 }
 
 void maj_etat(EDIT *ctx) {
+    char buffer[64];
     int i, j;
 
     // on demande la mise à jour des déplacements possibles
     eved_maj_depl(&ctx->jeu);
+
+    // mise à jour du label d'état
+    if(ctx->jeu.etat&ETAT_ATTENTEBOUGER) {
+        strcpy(buffer, "Choisir la destination du ");
+
+        switch(ETAT_ETAT(ctx->jeu.etat)) {
+        case ETAT_J1:
+            sprintf(buffer+strlen(buffer), "pion de %s", ctx->J1.pseudo);
+            break;
+        case ETAT_J2:
+            sprintf(buffer+strlen(buffer), "pion de %s", ctx->J2.pseudo);
+            break;
+        case ETAT_GARDIEN:
+            strcat(buffer, "gardien");
+            break;
+        default:
+            break;
+        }
+    }
+    else
+        strcpy(buffer, "Sélectionner un pion à déplacer");
+
+    gtk_label_set_text(GTK_LABEL(ctx->gui.lbl_statut), buffer);
 
     // mise à jour du plateau
     maj_appar_bouton(ctx, ctx->gui.bt_cellules[0], ctx->jeu.part[0]);
