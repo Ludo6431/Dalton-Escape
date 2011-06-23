@@ -1,23 +1,27 @@
--- commun --
-* toolbar
-* annuler dernier coup
-* pb drag si joueur gagne
-* pb drag si pion déjà sélectionné
-* enlever reset_cliquer
-* afficher nb_pions
-* ajouter README et INSTALL
-* rajouter image à l'ouverture
-* vérifier le nb de pions restant en cellule
+-- libevasion --
 * doxygen ?
 * 
 
 -- jeu --
-* sauvegarder scores ?
-* modifier affichage de l'état pour afficher attente bouger
 * déplacement aléatoire gardien si pion passe
+* sauvegarder scores ?
 * 
 
 -- editeur --
 * demander quel joueur commencera la partie
+* 
+
+-- commun --
+* annuler dernier coup
+* vérifier le nb de pions restant en cellule
+* afficher nb_pions
+* ajouter README et INSTALL
+* pb drag si joueur gagne
+* pb drag si pion déjà sélectionné
+* modifier affichage de l'état pour afficher attente bouger
+* enlever reset_cliquer
+* rajouter image à l'ouverture
+* toolbar
+* autotools ?
 * 
 
