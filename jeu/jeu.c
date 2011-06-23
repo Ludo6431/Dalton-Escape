@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "jeu/jeu.h"
 
@@ -19,18 +20,61 @@ void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen) {
     gtk_window_set_geometry_hints(GTK_WINDOW(fen), NULL, &hints, GDK_HINT_ASPECT);
 }
 
-void jeu_empile_coup(JEU *ctx, EV *jeu) {
-    ctx->pile_coups = g_slist_prepend(ctx->pile_coups, g_slice_dup(EV, jeu));
+void jeu_empile_coup(JEU *ctx) {
+    if(ctx->coups) {
+        assert(ctx->coup_curr);
+
+        GList *next;
+        while((next = g_list_next(ctx->coup_curr))) {
+            g_slice_free(EV, next->data);
+            ctx->coups = g_list_delete_link(ctx->coups, next);
+        }
+
+        ctx->coups = g_list_append(ctx->coup_curr/* ctx->coups */, g_slice_dup(EV, &ctx->jeu));
+        ctx->coup_curr = g_list_next(ctx->coup_curr);
+
+        assert(!g_list_next(ctx->coup_curr));
+    }
+    else
+        ctx->coup_curr = ctx->coups = g_list_append(NULL, g_slice_dup(EV, &ctx->jeu));
+
+    // on met à jour l'interface
+    if(g_list_previous(ctx->coup_curr))
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Undo"), TRUE);
+    else
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Undo"), FALSE);
+    gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Redo"), FALSE);
 }
 
-EV* jeu_depile_coup(JEU *ctx) {
-    EV *ret = NULL;
+void jeu_annule_coup(JEU *ctx) {
+    if(!ctx->coups || !ctx->coup_curr || !g_list_previous(ctx->coup_curr))
+        return;
 
-    if(ctx->pile_coups) {
-        ret = (EV *)ctx->pile_coups->data;
-        ctx->pile_coups = g_slist_remove(ctx->pile_coups, ret); // remove the first element
-    }
+    ctx->coup_curr = g_list_previous(ctx->coup_curr);
 
-    return ret;
+    memcpy(&ctx->jeu, ctx->coup_curr->data, sizeof(EV));
+
+    // on met à jour l'interface
+    if(g_list_previous(ctx->coup_curr))
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Undo"), TRUE);
+    else
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Undo"), FALSE);
+    gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Redo"), TRUE);
+}
+
+void jeu_refait_coup(JEU *ctx) {
+    if(!ctx->coups || !ctx->coup_curr || !g_list_next(ctx->coup_curr))
+        return;
+
+    ctx->coup_curr = g_list_next(ctx->coup_curr);
+
+    memcpy(&ctx->jeu, ctx->coup_curr->data, sizeof(EV));
+
+    // on met à jour l'interface
+    gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Undo"), TRUE);
+    if(g_list_next(ctx->coup_curr))
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Redo"), TRUE);
+    else
+        gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Redo"), FALSE);
 }
 

@@ -12,7 +12,6 @@
 * 
 
 -- commun --
-* annuler dernier coup [50%]
 * vérifier le nb de pions restant en cellule
 * afficher nb_pions
 * ajouter README et INSTALL

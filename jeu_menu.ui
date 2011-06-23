@@ -10,6 +10,7 @@
         </menu>
         <menu name="EditMenu" action="EditMenuAction">
             <menuitem name="Undo" action="UndoAction" />
+            <menuitem name="Redo" action="RedoAction" />
             <separator />
             <menuitem name="Settings" action="SettingsAction" />
         </menu>
