@@ -74,7 +74,7 @@ static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
 }
 
 void maj_etat(JEU *ctx) {
-    char buffer[32];
+    char buffer[64];
     int i, j;
 
     // on demande la mise à jour des déplacements possibles
@@ -100,6 +100,9 @@ void maj_etat(JEU *ctx) {
         sprintf(buffer, "Autre état : %d", ctx->jeu.etat);
         break;
     }
+
+    if(ctx->jeu.etat&ETAT_ATTENTEBOUGER)
+        strcat(buffer, " (choisir la destination)");
 
     gtk_label_set_text(GTK_LABEL(ctx->gui.lbl_statut), buffer);
 
