@@ -2,12 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "jeu/jeu.h"
 
 void jeu_ajout_nouveau(JEU *ctx, GtkWindow *fen) {
     GtkWidget *gui;
     GdkGeometry hints;
+
+    // met à jour la graine du générateur pseudo-aléatoire
+    srand(time(NULL));
 
     // crée l'interface
     gui = gui_init(&ctx->gui, fen, (void *)ctx);
