@@ -22,6 +22,24 @@ static inline void _init_case(GtkWidget *bt, void *user_ptr) {
     gtk_widget_set_sensitive(bt, FALSE);
 }
 
+static GtkActionEntry menu_entries[] = {
+    /* name, stock id, label, accelerator, tooltip, callback */
+    {"GameMenuAction", NULL, "_Game"},
+    {"NewAction", GTK_STOCK_NEW, "_New", "<control>N", "Start new game", G_CALLBACK(nouvelle_partie)},
+    {"SaveAction", GTK_STOCK_SAVE_AS, "_Save", "<control>S", "Save game", G_CALLBACK(sauvegarder_partie)},
+    {"LoadAction", GTK_STOCK_OPEN, "L_oad", "<control>O", "Load saved game", G_CALLBACK(charger_partie)},
+    {"QuitAction", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit game", G_CALLBACK(quitter_partie)},
+
+    {"EditMenuAction", NULL, "E_dit"},
+    {"UndoAction", GTK_STOCK_UNDO, "Undo", "<control>Z", "Undo last action", G_CALLBACK(annuler_coup)},
+    {"RedoAction", GTK_STOCK_REDO, "Redo", "<shift><control>Z", "Redo last action", G_CALLBACK(refaire_coup)},
+    {"SettingsAction", GTK_STOCK_PREFERENCES, "Settings", NULL, "Save game", NULL},
+
+    {"HelpMenuAction", NULL, "_Help"},
+    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contents", "F1", "Manual of the editor", NULL},
+    {"AboutAction", GTK_STOCK_ABOUT, "About", NULL, "About the game", NULL},
+};
+
 // crée l'interface que l'on peut ajouter dans n'importe quel container
 GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
     int i;
@@ -42,7 +60,26 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
     gui->vbox = gtk_vbox_new(FALSE, 0);
 
         // menu
-        gui->menu = gui_menu_new(GTK_WINDOW(gui->fenetre), user_ptr);
+        {
+            GError *error;
+            GtkActionGroup *action_group;
+
+            action_group = gtk_action_group_new("MenuActions");
+            gtk_action_group_add_actions(action_group, menu_entries, G_N_ELEMENTS(menu_entries), user_ptr);
+            gui->menu_manager = gtk_ui_manager_new();
+            gtk_ui_manager_insert_action_group(gui->menu_manager, action_group, 0);
+            error = NULL;
+            gtk_ui_manager_add_ui_from_file(gui->menu_manager, "editeur_menu.ui", &error);
+            if(error) {
+                g_message("building menus failed: %s", error->message);
+                g_error_free(error);
+            }
+            gtk_window_add_accel_group(GTK_WINDOW(gui->fenetre), gtk_ui_manager_get_accel_group(gui->menu_manager));
+
+            gtk_widget_set_sensitive(gtk_ui_manager_get_widget(gui->menu_manager, "/MainMenu/EditMenu/Undo"), FALSE);
+            gtk_widget_set_sensitive(gtk_ui_manager_get_widget(gui->menu_manager, "/MainMenu/EditMenu/Redo"), FALSE);
+        }
+        gui->menu = gtk_ui_manager_get_widget(gui->menu_manager, "/MainMenu");
         gtk_box_pack_start(GTK_BOX(gui->vbox), gui->menu, FALSE, FALSE, 0);
         gtk_widget_show(gui->menu);
 

@@ -85,7 +85,7 @@ void maj_etat(EDIT *ctx) {
     if(ctx->jeu.etat&ETAT_ENREGCOUP) {
         ctx->jeu.etat &= ~ETAT_ENREGCOUP;   // acknowledge
 
-        editeur_empile_coup(ctx, &ctx->jeu);
+        editeur_empile_coup(ctx);
     }
 
     // mise à jour du label d'état

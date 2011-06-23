@@ -16,14 +16,17 @@ typedef struct {
 
     // l'état du jeu
     EV jeu;
-    GSList *pile_coups; // pour annuler les derniers coups
+    GList *coups; // pour annuler les derniers coups
+    GList *coup_curr;   // coup_curr pointe toujours vers la version la plus à jour de jeu
 
     // fichier où la partie est sauvegardée
     char *filename;
 } EDIT;
 
 void    editeur_ajout_nouveau   (EDIT *ctx, GtkWindow *fen);
-void    editeur_empile_coup     (EDIT *ctx, EV *jeu);
-EV*     editeur_depile_coup     (EDIT *ctx);
+
+void    editeur_empile_coup     (EDIT *ctx);
+void    editeur_annule_coup     (EDIT *ctx);
+void    editeur_refait_coup     (EDIT *ctx);
 
 #endif
