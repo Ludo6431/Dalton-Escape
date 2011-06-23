@@ -152,8 +152,20 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
     // on enlève le pion de là où il était
     ev_case_set(je, je->sx, je->sy, (ev_case_get(je, je->sx, je->sy)&~CASE_MASQTYPE) | CASE_LIBRE);
 
-    if(EV_DANSSORT(dx, dy))    // le joueur a passé un pion dans la sortie
+    if(EV_DANSSORT(dx, dy)) {   // le joueur a passé un pion dans la sortie
         je->nb_pions[joueur]++;
+
+        int i, gx, ligne = (((unsigned)rand())%8)+1, dir = ((unsigned)rand())&1;
+
+        for(gx=0; gx<9; gx++)
+            if(CASE_TYPE(je->tab[gx][ligne]) == CASE_GARDIEN)
+                break;
+
+        for(i=gx; (i<9 && dir) || (i>=0 && !dir); i+=(dir?1:-1))
+            je->tab[i][ligne] &= ~CASE_MASQTYPE;
+
+        je->tab[dir?8:0][ligne] |= CASE_GARDIEN;
+    }
 
     if(je->nb_pions[joueur]==3) {   // on vérifie si ce déplacement lui permet de gagner
         je->etat = (joueur?ETAT_J2WIN:ETAT_J1WIN) | ETAT_ENREGCOUP;
@@ -175,7 +187,7 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
 
             // on enlève le gardien de là où il était et les pions sur le passage du gardien
             for(i=0; (i<=dist && dist>0) || (i>=dist && dist<0); i+=(dist>0?1:-1))
-                je->tab[CLAMP(0, gx+i, 8)][dy] = je->tab[CLAMP(0, gx+i, 8)][dy]&~CASE_MASQTYPE;
+                je->tab[CLAMP(0, gx+i, 8)][dy] &= ~CASE_MASQTYPE;
             je->tab[CLAMP(0, gx+dist, 8)][dy] |= CASE_GARDIEN;  // on met le gardien à sa nouvelle place
         }
     }
