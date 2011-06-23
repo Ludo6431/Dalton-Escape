@@ -14,8 +14,8 @@ static int canmove(EV *je, int sx, int sy, int dx, int dy) {
     if(sy == dy && dy == -1 && sx != dx)    // on ne peut pas bouger un pion des cellules d'un joueur à l'autre
         return 0;
 
-    if(dy == -1 && ((CASE_TYPE(ev_case_get(je, sx, sy)) == CASE_J1 && dx == 1) || (CASE_TYPE(ev_case_get(je, sx, sy)) == CASE_J2 && dx == 0)))
-        return 0;   // on ne peut pas bouger un pion vers les cellules d'un autre joueur
+    if(dy == -1 && CASE2JOUE(ev_case_get(je, sx, sy))!=dx)  // on ne peut pas bouger un pion vers les cellules d'un autre joueur
+        return 0;
 
     if(sy == dy && (sx == dx || dy == 9))    // on peut annuler notre déplacement en cliquant sur là où on était
         return 1;   // (rq. : si le y == 9, le x peut valoir n'importe quoi)
@@ -40,16 +40,7 @@ void eved_debut_depl(EV *je, int sx, int sy) {    // choix de la source
 
     switch(sy) {
     case -1:    // cellules
-        switch(sx) {
-        case 0: // cellules J1
-            e = CASE2ETAT(CASE_J1);
-            break;
-        case 1: // cellules J2
-            e = CASE2ETAT(CASE_J2);
-            break;
-        default:
-            break;
-        }
+        e = JOUE2ETAT(sx);  // sx==0 => ETAT_J1; ...
         break;
     default:    // cour
         e = CASE2ETAT(ev_case_get(je, sx, sy));

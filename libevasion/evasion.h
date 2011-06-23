@@ -28,13 +28,22 @@ typedef enum {
     ETAT_ENREGCOUP      = BIT(4)
 } etat_t;
 
+// converti une case en état (et vice-versa)
 #define CASE2ETAT(c) ((etat_t)CLAMP(CASE_J1, CASE_TYPE(c), CASE_GARDIEN))
 #define ETAT2CASE(e) ((case_t)CLAMP(ETAT_J1, ETAT_ETAT(e), ETAT_GARDIEN))
+
+// converti un état en joueur (et vice-versa)
+#define ETAT2JOUE(e) ((int)CLAMP(0, ETAT_ETAT(e)-ETAT_J1, 2))
+#define JOUE2ETAT(j) ((etat_t)CLAMP(ETAT_J1, (j)+ETAT_J1, ETAT_GARDIEN))
+
+// converti une case en joueur (et vice-versa)
+#define CASE2JOUE(c) ((int)CLAMP(0, CASE_TYPE(c)-CASE_J1, 2))
+#define JOUE2CASE(j) ((case_t)CLAMP(CASE_J1, (j)+CASE_J1, CASE_GARDIEN))
 
 typedef struct {
     etat_t etat;        // état en cours
 
-    int joueur_debut;   // joueur qui commence
+    int joueur_debut;   // joueur qui commence (0==J1, 1==J2)
     int nb_p_cell[2];   // le nb de prisonniers qui sont en cellules pour chaque joueur
     int nb_p_sort[2];   // le nb de prisonniers qui sont passés pour chaque joueur
 

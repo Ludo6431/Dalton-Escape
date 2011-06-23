@@ -7,11 +7,11 @@
 * 
 
 -- editeur --
-* demander quel joueur commencera la partie
 * 
 
 -- commun --
 * afficher le nombre de prisonniers sortis
+* faire deux fonctions verifie et repare
 * rédiger l'aide ingame
 * ajouter README et INSTALL
 * pb drag/clic si joueur gagne

@@ -22,11 +22,38 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
 }
 
 void sauvegarder_partie(GtkWidget *w, EDIT *ctx) {
-    // on fait attention à ce que la partie sauvegardée soit valide
-    // TODO: demander quel joueur commencera
+    EV jeu;
+    memcpy(&jeu, &ctx->jeu, sizeof(EV));
+
+    // on demande quel joueur commencera la partie
+    {
+        GtkWidget *dialog, *content, *label;
+        int resp;
+
+        dialog = gtk_dialog_new_with_buttons("Joueur qui commence", GTK_WINDOW(ctx->gui.fenetre), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+            ctx->J1.pseudo, ETAT_J1,
+            ctx->J2.pseudo, ETAT_J2,
+            NULL
+        );
+        content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+            label = gtk_label_new("Choisir le joueur qui commencera à jouer");
+            gtk_box_pack_start(GTK_BOX(content), label, TRUE, TRUE, 0);
+            gtk_widget_show(label);
+
+        resp = gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        assert(resp==ETAT_J1 || resp==ETAT_J2);
+
+        jeu.etat &= ~ETAT_MASQETAT;
+        jeu.etat |= resp;
+
+        jeu.joueur_debut = !ETAT2JOUE(jeu.etat);
+    }
+
+    // TODO: on fait attention à ce que la partie sauvegardée soit valide
 
     // on sauvegarde la partie
-    io_sauvegarder(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &ctx->jeu, &ctx->J1, &ctx->J2);
+    io_sauvegarder(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &jeu, &ctx->J1, &ctx->J2);
 }
 
 void charger_partie(GtkWidget *w, EDIT *ctx) {
