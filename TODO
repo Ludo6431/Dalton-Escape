@@ -19,7 +19,6 @@
 * pb drag si joueur gagne
 * pb drag si pion déjà sélectionné
 * modifier affichage de l'état pour afficher attente bouger
-* enlever reset_cliquer
 * rajouter image à l'ouverture
 * toolbar
 * autotools ?

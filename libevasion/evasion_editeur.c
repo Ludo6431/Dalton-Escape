@@ -24,16 +24,6 @@ static int canmove(EV *je, int sx, int sy, int dx, int dy) {
     return 1;
 }
 
-static void resetcliquer(EV *je) {
-    int i, j;
-
-    je->part[0] &= ~CASE_PEUTCLIQUER;
-    for(j=0; j<9; j++)
-        for(i=0; i<9; i++)
-            je->tab[i][j] &= ~CASE_PEUTCLIQUER;
-    je->part[1] &= ~CASE_PEUTCLIQUER;
-}
-
 void eved_debut_depl(EV *je, int sx, int sy) {    // choix de la source
     assert(je);
     assert(!(je->etat & ETAT_ATTENTEBOUGER));
@@ -93,16 +83,19 @@ void eved_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
 void eved_maj_depl(EV *je) {
     int i, j;
 
-    resetcliquer(je);   // on enlève les drapeaux
-
     if(je->etat&ETAT_ATTENTEBOUGER) {   // choix de la destination
         if(canmove(je, je->sx, je->sy, 0, -1))
             je->part[0] |= CASE_PEUTCLIQUER;
+        else
+            je->part[0] &= ~CASE_PEUTCLIQUER;
 
         for(j=0; j<9; j++)              // cour
-            for(i=0; i<9; i++)
+            for(i=0; i<9; i++) {
                 if(canmove(je, je->sx, je->sy, i, j))
                     je->tab[i][j] |= CASE_PEUTCLIQUER;
+                else
+                    je->tab[i][j] &= ~CASE_PEUTCLIQUER;
+            }
 
         je->part[1] &= ~CASE_PEUTCLIQUER;   // inutile de pouvoir sortir
     }
@@ -110,9 +103,12 @@ void eved_maj_depl(EV *je) {
         je->part[0] |= CASE_PEUTCLIQUER;    // TODO : vérifier le nombre de pions restant pour le joueur qui va jouer (il faut stocker ça qque part)
 
         for(j=0; j<9; j++)
-            for(i=0; i<9; i++)
+            for(i=0; i<9; i++) {
                 if(CASE_TYPE(je->tab[i][j]) != CASE_LIBRE)
                     je->tab[i][j] |= CASE_PEUTCLIQUER;
+                else
+                    je->tab[i][j] &= ~CASE_PEUTCLIQUER;
+            }
 
         je->part[1] &= ~CASE_PEUTCLIQUER;   // on ne peut pas récupérer les pions qui sont sortis
     }
