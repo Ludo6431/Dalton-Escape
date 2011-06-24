@@ -1,4 +1,4 @@
-.PHONY:all clean
+.PHONY:all dist-clean clean
 
 # jeu
 EXEC_JEU := dalton-escape
@@ -25,6 +25,9 @@ CFLAGS = -Wall -g -I. `pkg-config gtk+-2.0 --cflags`
 LDFLAGS = `pkg-config gtk+-2.0 --libs`
 
 all:$(EXECS)
+
+dist-clean:
+	rm $(OBJS)
 
 clean:
 	rm $(EXECS) $(OBJS)
