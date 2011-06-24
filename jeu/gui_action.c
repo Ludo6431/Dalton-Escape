@@ -5,6 +5,7 @@
 
 #include "commun/joueur.h"
 #include "libevasion/evasion.h"
+#include "jeu/gui_menu.h"
 
 #include "jeu/gui_action.h"
 
@@ -163,6 +164,51 @@ void maj_etat(JEU *ctx) {
             maj_appar_bouton(ctx, ctx->gui.bts_cases[i][j], ctx->jeu.tab[i][j]);
 
     maj_appar_bouton(ctx, ctx->gui.bt_sortie, ctx->jeu.part[1]);
+
+    joueur = 1;
+    switch(ETAT_ETAT(ctx->jeu.etat)) {
+    case ETAT_J1WIN:
+        joueur = 0;
+    case ETAT_J2WIN:{
+        GtkWidget *dialog, *content, *label;
+        int resp;
+        char buffer[256];
+
+        dialog = gtk_dialog_new_with_buttons("Bravo !", GTK_WINDOW(ctx->gui.fenetre), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+            "Nouvelle partie", 1,
+            GTK_STOCK_QUIT, 2,
+            "Continuer", 3,
+            NULL
+        );
+        content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+            sprintf(buffer, "Bravo %s !\n\nScores :\n%s: %d\n%s: %d\n\nVoulez-vous continuer tous les deux ou\ncommencer une nouvelle partie avec deux autres joueurs ?",
+                joueur?ctx->J2.pseudo:ctx->J1.pseudo, ctx->J1.pseudo, ctx->J1.score, ctx->J2.pseudo, ctx->J2.score
+            );
+            label = gtk_label_new(buffer);
+            gtk_box_pack_start(GTK_BOX(content), label, TRUE, TRUE, 0);
+            gtk_widget_show(label);
+
+        resp = gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+
+        switch(resp) {
+        case 1:
+            nouvelle_partie(NULL, ctx);
+            break;
+        case 2:
+            exit(EXIT_SUCCESS);
+            break;
+        case 3:
+            ev_nouvellepartie(&ctx->jeu);
+
+            maj_etat(ctx);
+            break;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 static int _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {

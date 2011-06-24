@@ -158,6 +158,10 @@ void charger_partie(GtkWidget *w, EDIT *ctx) {
     editeur_vide_coups(ctx);
     ctx->jeu.etat |= ETAT_ENREGCOUP;
 
+    // on cache l'image de bienvenue et on affiche la table de jeu
+    gtk_widget_hide(ctx->gui.bienvenue);
+    gtk_widget_show(ctx->gui.aframe);
+
     // et on met à jour l'IHM
     maj_etat(ctx);
 }

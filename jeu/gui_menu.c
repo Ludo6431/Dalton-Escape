@@ -17,6 +17,11 @@ void nouvelle_partie(GtkWidget *w, JEU *ctx) {
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J2), ctx->J2.pseudo);
 
+    // on réinitialise qques variables dans le cas où recommence une partie
+    ctx->jeu.joueur_debut = 0;
+    ctx->J1.score = 0;
+    ctx->J2.score = 0;
+
     ev_nouvellepartie(&ctx->jeu);
 
     // on cache l'image de bienvenue et on affiche la table de jeu
@@ -88,6 +93,10 @@ void charger_partie(GtkWidget *w, JEU *ctx) {
     // on réinitialise la liste des coups enregistrés et on empile l'état actuel
     jeu_vide_coups(ctx);
     ctx->jeu.etat |= ETAT_ENREGCOUP;
+
+    // on cache l'image de bienvenue et on affiche la table de jeu
+    gtk_widget_hide(ctx->gui.bienvenue);
+    gtk_widget_show(ctx->gui.aframe);
 
     // et on met à jour l'IHM
     maj_etat(ctx);
