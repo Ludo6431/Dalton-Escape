@@ -15,8 +15,6 @@
             <menuitem name="Redo" action="RedoAction" />
         </menu>
         <menu name="HelpMenu" action="HelpMenuAction">
-            <menuitem name="Contents" action="ContentsAction" />
-            <separator />
             <menuitem name="About" action="AboutAction" />
         </menu>
     </menubar>

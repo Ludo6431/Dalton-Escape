@@ -220,6 +220,18 @@ void quitter_partie(GtkWidget *w, EDIT *ctx) {
     gtk_main_quit();
 }
 
+void afficher_apropos(GtkWidget *w, EDIT *ctx) {
+    GtkWidget *dialog = gtk_about_dialog_new();
+
+    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), "Dalton Escape Editeur");
+    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), "0.1"); 
+    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog), "(c) Anne-Claire Poujol De Molliens & Ludovic Lacoste");
+    gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "L'éditeur d'un jeu d'évasion.");
+    gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/Ludo6431/Dalton-Escape");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
 
 void annuler_coup(GtkWidget *w, EDIT *ctx) {
     editeur_annule_coup(ctx);

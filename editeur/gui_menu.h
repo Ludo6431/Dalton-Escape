@@ -8,6 +8,7 @@ void    nouvelle_partie     (GtkWidget *w, EDIT *ctx);
 void    sauvegarder_partie  (GtkWidget *w, EDIT *ctx);
 void    charger_partie      (GtkWidget *w, EDIT *ctx);
 void    quitter_partie      (GtkWidget *w, EDIT *ctx);
+void    afficher_apropos    (GtkWidget *w, EDIT *ctx);
 
 // Edit Menu
 void    annuler_coup        (GtkWidget *w, EDIT *ctx);

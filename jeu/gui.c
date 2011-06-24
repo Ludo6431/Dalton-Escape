@@ -35,9 +35,8 @@ GtkActionEntry menu_entries[] = {
     {"UndoAction", GTK_STOCK_UNDO, "Annuler", "<control>Z", "Annule le dernier coup", G_CALLBACK(annuler_coup)},
     {"RedoAction", GTK_STOCK_REDO, "Refaire", "<shift><control>Z", "Refait le dernier coup annulé", G_CALLBACK(refaire_coup)},
 
-    {"HelpMenuAction", NULL, "_Aide"},
-    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contenu", "F1", "Manuel du jeu", NULL},
-    {"AboutAction", GTK_STOCK_ABOUT, "A propos", NULL, "A propos du jeu", NULL},
+    {"HelpMenuAction", NULL, "Aid_e", "<control>E"},
+    {"AboutAction", GTK_STOCK_ABOUT, "A propos", NULL, "A propos du jeu", G_CALLBACK(afficher_apropos)},
 };
 
 // crée l'interface que l'on peut ajouter dans n'importe quel container
