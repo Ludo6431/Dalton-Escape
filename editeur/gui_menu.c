@@ -22,6 +22,13 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
     gtk_widget_hide(ctx->gui.bienvenue);
     gtk_widget_show(ctx->gui.aframe);
 
+    // on met à jour le nb de pions sortis
+    char buffer[32];
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[0]);
+    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J1), buffer);
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[1]);
+    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J2), buffer);
+
     maj_etat(ctx);
 }
 
@@ -29,6 +36,23 @@ void sauvegarder_partie(GtkWidget *w, EDIT *ctx) {
     EV jeu;
     int ret;
     memcpy(&jeu, &ctx->jeu, sizeof(EV));
+
+    // on récupère les nb_p_sort que l'utilisateur peut avoir modifié
+    {
+        char buffer[32];
+        int score;
+
+        strcpy(buffer, gtk_entry_get_text(GTK_ENTRY(ctx->gui.score_J1)));
+        if(sscanf(buffer, "%d", &score)==1) {
+            jeu.nb_p_cell[0] -= score - jeu.nb_p_sort[0];
+            jeu.nb_p_sort[0] = score;
+        }
+        strcpy(buffer, gtk_entry_get_text(GTK_ENTRY(ctx->gui.score_J2)));
+        if(sscanf(buffer, "%d", &score)==1) {
+            jeu.nb_p_cell[1] -= score - jeu.nb_p_sort[1];
+            jeu.nb_p_sort[1] = score;
+        }
+    }
 
     // on demande quel joueur commencera la partie
     {
@@ -161,6 +185,13 @@ void charger_partie(GtkWidget *w, EDIT *ctx) {
     // on cache l'image de bienvenue et on affiche la table de jeu
     gtk_widget_hide(ctx->gui.bienvenue);
     gtk_widget_show(ctx->gui.aframe);
+
+    // on met à jour le nb de pions sortis
+    char buffer[32];
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[0]);
+    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J1), buffer);
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[1]);
+    gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J2), buffer);
 
     // et on met à jour l'IHM
     maj_etat(ctx);

@@ -123,8 +123,8 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
                 gtk_table_attach(GTK_TABLE(gui->table), gui->lbl_J1, 0, 2, 11, 12, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                 gtk_widget_show(gui->lbl_J1);
 
-                gui->score_J1 = gtk_entry_new();    // TODO: est-ce utile de garder le score ? => modifiable ?
-                gtk_entry_set_editable(GTK_ENTRY(gui->score_J1), FALSE);
+                gui->score_J1 = gtk_entry_new();
+                gtk_entry_set_editable(GTK_ENTRY(gui->score_J1), TRUE);
                 gtk_entry_set_width_chars(GTK_ENTRY(gui->score_J1), 2);
                 gtk_entry_set_alignment(GTK_ENTRY(gui->score_J1), 0.5);
                 gtk_table_attach(GTK_TABLE(gui->table), gui->score_J1, 0, 2, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
@@ -142,7 +142,7 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
                 gtk_widget_show(gui->lbl_J2);
 
                 gui->score_J2 = gtk_entry_new();
-                gtk_entry_set_editable(GTK_ENTRY(gui->score_J2), FALSE);
+                gtk_entry_set_editable(GTK_ENTRY(gui->score_J2), TRUE);
                 gtk_entry_set_width_chars(GTK_ENTRY(gui->score_J2), 2);
                 gtk_entry_set_alignment(GTK_ENTRY(gui->score_J2), 0.5);
                 gtk_table_attach(GTK_TABLE(gui->table), gui->score_J2, 7, 9, 12, 13, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
