@@ -3,6 +3,8 @@
 * 
 
 -- jeu --
+* empiler l'état quand on charge une partie *
+* faire si on gagne **
 * sauvegarder scores ?
 * 
 
@@ -11,14 +13,16 @@
 
 -- commun --
 * afficher le nombre de prisonniers sortis
-* faire deux fonctions verifie et repare
-* rédiger l'aide ingame
-* ajouter README et INSTALL
-* pb drag/clic si joueur gagne
+* rédiger l'aide ingame ***
+* ajouter README et INSTALL ***
+* vider liste de coups quand on charge *
+* demande si on sauvegarde quand on quitte ?
+* pb drag/clic si joueur gagne **
 * pb drag si pion déjà cliqué
 * que faire avec la couleur demandée au joueur ?
 * rajouter image à l'ouverture
 * toolbar
+* icône de la fenêtre
 * autotools ?
 * 
 

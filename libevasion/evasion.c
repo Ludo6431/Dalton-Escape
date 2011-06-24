@@ -250,6 +250,86 @@ void ev_maj_depl(EV *je) {
     }
 }
 
+int ev_verifie(EV *je, int repare, int fichier) {
+    int i, j;
+    int cases[4] = {0}, nb;
+
+    if(fichier && (ETAT_ETAT(je->etat)==ETAT_GARDIEN || ETAT_ETAT(je->etat)==ETAT_INIT))
+        return 1;   // les états gardien et init sont utilisés en interne, ils ne doivent jamais se retrouver dans un fichier
+
+    if(je->etat&ETAT_ATTENTEBOUGER) {
+        int fail = 0;
+
+        if(!EV_DANSPLAT(je->sx, je->sy) || EV_DANSSORT(je->sx, je->sy))
+            fail = 2;
+
+        if(EV_DANSCOUR(je->sx, je->sy) && (CASE_TYPE(ev_case_get(je, je->sx, je->sy))==CASE_LIBRE || (fichier && CASE_TYPE(ev_case_get(je, je->sx, je->sy))==CASE_GARDIEN)))
+            fail = 3;
+
+        if(fail) {
+            if(repare)
+                je->etat &= ~ETAT_ATTENTEBOUGER;
+            else
+                return fail;
+        }
+    }
+
+    switch(ETAT_ETAT(je->etat)) {
+    case ETAT_J1:
+    case ETAT_J2:
+    case ETAT_GARDIEN:
+        for(j=0; j<9; j++) {    // on compte les éléments du tableau
+            nb = cases[CASE_GARDIEN];
+
+            for(i=0; i<9; i++)
+                cases[CASE_TYPE(je->tab[i][j])]++;
+
+            if(j>=1 && cases[CASE_GARDIEN]!=nb+1)
+                return 4;   // irréparable
+        }
+
+        if(cases[CASE_J1]>4 || cases[CASE_J2]>4)    // il ne doit pas y avoir sur le plateau plus de 4 prisonniers de chaque joueur
+            return 5;   // irréparable
+
+        if(je->nb_p_cell[0]+cases[CASE_J1]+je->nb_p_sort[0]!=4) {   // il doit y avoir 4 joueurs exactement en tout pour chaque joueur
+            if(repare)
+                je->nb_p_cell[0] = 4-cases[CASE_J1]-je->nb_p_sort[0];
+            else
+                return 6;
+        }
+
+        if(je->nb_p_cell[1]+cases[CASE_J2]+je->nb_p_sort[1]!=4) {   // il doit y avoir 4 joueurs exactement en tout pour chaque joueur
+            if(repare)
+                je->nb_p_cell[1] = 4-cases[CASE_J2]-je->nb_p_sort[1];
+            else
+                return 7;
+        }
+
+        if(CASE_TYPE(je->part[0])!=CASE_LIBRE) {    // une case particuliaire ne contient pas de pion
+            if(repare) {
+                je->part[0] &= ~CASE_MASQTYPE;
+                je->part[0] |= CASE_LIBRE;
+            }
+            else
+                return 8;
+        }
+
+        if(CASE_TYPE(je->part[1])!=CASE_LIBRE) {    // une case particuliaire ne contient pas de pion
+            if(repare) {
+                je->part[1] &= ~CASE_MASQTYPE;
+                je->part[1] |= CASE_LIBRE;
+            }
+            else
+                return 9;
+        }
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
 int ev_sauvegarder(EV *je, FILE *fd) {
     return fwrite(je, sizeof(*je), 1, fd)!=1;
 }

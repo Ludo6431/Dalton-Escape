@@ -133,6 +133,7 @@ static int _w2xy(GtkWidget *w, JEU *ctx, int *x, int *y) {
     int i, j;
 
     if(w == ctx->gui.bt_cellules) {
+        *x = 0;
         *y = -1;
         return 0;
     }

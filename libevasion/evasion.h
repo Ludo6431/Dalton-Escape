@@ -60,11 +60,12 @@ inline void ev_annuler_depl     (EV *je);
 void        ev_fin_depl         (EV *je, int x, int y);     // x ppartient [0,8] ; y appartient [-1,9]
 void        ev_maj_depl         (EV *je);
 
+int         ev_verifie          (EV *je, int repare, int fichier);
 int         ev_sauvegarder      (EV *je, FILE *fd);
 int         ev_charger          (EV *je, FILE *fd);
 
 // helpers defines/functions
-#define EV_DANSCELL(x, y) ((y)==-1)
+#define EV_DANSCELL(x, y) (((x)==0 || (x)==1) && (y)==-1)
 #define EV_DANSCOUR(x, y) ((x)>=0 && (x)<9 && (y)>=0 && (y)<9)
 #define EV_DANSSORT(x, y) ((y)==9)
 #define EV_DANSPLAT(x, y) (EV_DANSCELL(x, y) || EV_DANSCOUR(x, y) || EV_DANSSORT(x, y))
