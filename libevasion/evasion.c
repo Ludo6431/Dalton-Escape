@@ -172,12 +172,20 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
 
         int i, gx, ligne = (((unsigned)rand())%8)+1, dir = ((unsigned)rand())&1;
 
+        // on cherche le gardien sur la ligne
         for(gx=0; gx<9; gx++)
             if(CASE_TYPE(je->tab[gx][ligne]) == CASE_GARDIEN)
                 break;
 
-        for(i=gx; (i<9 && dir) || (i>=0 && !dir); i+=(dir?1:-1))
+        // on le fait aller à son nouvel emplacement en supprimant tous les pions sur son passage
+        for(i=gx; (i<9 && dir) || (i>=0 && !dir); i+=(dir?1:-1)) {
+            case_t c = CASE_TYPE(je->tab[i][ligne]);
+
+            if(c==CASE_J1 || c==CASE_J2)
+                je->nb_p_cell[CASE2JOUE(c)]++;  // si on écrase un joueur, on le renvoie dans la cellule
+
             je->tab[i][ligne] &= ~CASE_MASQTYPE;
+        }
 
         je->tab[dir?8:0][ligne] |= CASE_GARDIEN;
     }
@@ -191,6 +199,8 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
         je->tab[dx][dy] |= joueur?CASE_J2:CASE_J1;
         if(dy>0) {  // on bouge le gardien qui va bien
             int gx, dist, i;
+
+            // on cherche le gardien sur la ligne
             for(gx=0; gx<9; gx++)
                 if(CASE_TYPE(je->tab[gx][dy]) == CASE_GARDIEN)
                     break;
@@ -201,8 +211,15 @@ void ev_fin_depl(EV *je, int dx, int dy) {    // choix de la destination
                 dist = (gx>je->sx?-1:1)*abs(dx-je->sx);
 
             // on enlève le gardien de là où il était et les pions sur le passage du gardien
-            for(i=0; (i<=dist && dist>0) || (i>=dist && dist<0); i+=(dist>0?1:-1))
+            for(i=0; (i<=dist && dist>0) || (i>=dist && dist<0); i+=(dist>0?1:-1)) {
+                case_t c = CASE_TYPE(je->tab[CLAMP(0, gx+i, 8)][dy]);
+
+                if(c==CASE_J1 || c==CASE_J2)
+                    je->nb_p_cell[CASE2JOUE(c)]++;  // si on écrase un joueur, on le renvoie dans la cellule
+
                 je->tab[CLAMP(0, gx+i, 8)][dy] &= ~CASE_MASQTYPE;
+            }
+
             je->tab[CLAMP(0, gx+dist, 8)][dy] |= CASE_GARDIEN;  // on met le gardien à sa nouvelle place
         }
     }

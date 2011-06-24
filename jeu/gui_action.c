@@ -16,6 +16,18 @@ static GtkTargetEntry target_list[] = {
     { "PAWN",    0, TARGET_PAWN }
 };
 
+int win[9][9] = {
+    {0, 0, 0, 1, 1, 0, 0, 0, 0},
+    {0, 0, 1, 0, 1, 0, 0, 0, 0},
+    {0, 1, 0, 0, 1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 0, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {0, 0, 0, 0, 0, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 0, 0, 0, 0, 1},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1}
+};
+
 static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
     GtkWidget *image = NULL;
 
@@ -75,10 +87,7 @@ static void maj_appar_bouton(JEU *ctx, GtkWidget *bt, case_t c) {
 
 void maj_etat(JEU *ctx) {
     char buffer[64];
-    int i, j;
-
-    // on demande la mise à jour des déplacements possibles
-    ev_maj_depl(&ctx->jeu);
+    int i, j, joueur;
 
     // on empile le contexte actuel si un coup vient de se finir
     if(ctx->jeu.etat&ETAT_ENREGCOUP) {
@@ -118,6 +127,33 @@ void maj_etat(JEU *ctx) {
     gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J1), buffer);
     sprintf(buffer, "%d", ctx->J2.score);
     gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J2), buffer);
+
+    joueur = 1;
+    switch(ETAT_ETAT(ctx->jeu.etat)) {
+    case ETAT_J1:
+    case ETAT_J2:
+        // on demande la mise à jour des déplacements possibles
+        ev_maj_depl(&ctx->jeu);
+        break;
+    case ETAT_J1WIN:
+        joueur = 0;
+    case ETAT_J2WIN:
+        ctx->jeu.part[0] &= ~(CASE_MASQTYPE | CASE_PEUTCLIQUER);
+        ctx->jeu.part[0] |= CASE_LIBRE;
+        for(j=0; j<9; j++)
+            for(i=0; i<9; i++) {
+                ctx->jeu.tab[i][j] &= ~(CASE_MASQTYPE | CASE_PEUTCLIQUER);
+                if(win[j][i])
+                    ctx->jeu.tab[i][j] |= JOUE2CASE(joueur);
+                else
+                    ctx->jeu.tab[i][j] |= CASE_LIBRE;
+            }
+        ctx->jeu.part[1] &= ~(CASE_MASQTYPE | CASE_PEUTCLIQUER);
+        ctx->jeu.part[1] |= CASE_LIBRE;
+        break;
+    default:
+        break;
+    }
 
     // mise à jour du plateau
     maj_appar_bouton(ctx, ctx->gui.bt_cellules, ctx->jeu.part[0]);

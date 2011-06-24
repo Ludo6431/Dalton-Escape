@@ -3,12 +3,13 @@
 * 
 
 -- jeu --
-* afficher quelquechose si on gagne (cf 9*9 pix) **
-* pb drag/clic si joueur gagne **
+* afficher dialog si on gagne
+* afficher nb_p_sort dans les champs textes
 * sauvegarder scores ?
 * 
 
 -- editeur --
+* pouvoir editer nb_p_sort et scores
 * 
 
 -- commun --
