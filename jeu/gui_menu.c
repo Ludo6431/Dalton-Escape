@@ -31,6 +31,27 @@ void nouvelle_partie(GtkWidget *w, JEU *ctx) {
     maj_etat(ctx);
 }
 
+void afficher_scores(GtkWidget *w, JEU *ctx) {
+    GtkWidget *dialog, *content, *label;
+    int resp;
+    char buffer[256];
+
+    dialog = gtk_dialog_new_with_buttons("Bravo !", GTK_WINDOW(ctx->gui.fenetre), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_STOCK_OK, 1,
+        NULL
+    );
+    content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+        sprintf(buffer, "Scores :\n%s: %d\n%s: %d\n",
+            ctx->J1.pseudo, ctx->J1.score, ctx->J2.pseudo, ctx->J2.score
+        );
+        label = gtk_label_new(buffer);
+        gtk_box_pack_start(GTK_BOX(content), label, TRUE, TRUE, 0);
+        gtk_widget_show(label);
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
 void sauvegarder_partie(GtkWidget *w, JEU *ctx) {
     // on sauvegarde la partie
     io_sauvegarder(GTK_WINDOW(ctx->gui.fenetre), &ctx->filename, &ctx->jeu, &ctx->J1, &ctx->J2);

@@ -24,20 +24,20 @@ static inline void _init_case(GtkWidget *bt, void *user_ptr) {
 
 GtkActionEntry menu_entries[] = {
     /* name, stock id, label, accelerator, tooltip, callback */
-    {"GameMenuAction", NULL, "_Game"},
-    {"NewAction", GTK_STOCK_NEW, "_New", "<control>N", "Start new game", G_CALLBACK(nouvelle_partie)},
-    {"SaveAction", GTK_STOCK_SAVE_AS, "_Save", "<control>S", "Save game", G_CALLBACK(sauvegarder_partie)},
-    {"LoadAction", GTK_STOCK_OPEN, "L_oad", "<control>O", "Load saved game", G_CALLBACK(charger_partie)},
-    {"QuitAction", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit game", G_CALLBACK(quitter_partie)},
+    {"GameMenuAction", NULL, "_Jeu", "<control>J"},
+    {"NewAction", GTK_STOCK_NEW, "Nouveau", "<control>N", "Commence une nouvelle partie", G_CALLBACK(nouvelle_partie)},
+    {"SaveAction", GTK_STOCK_SAVE_AS, "Sauvegarder", "<control>S", "Sauvegarder la partie en cours", G_CALLBACK(sauvegarder_partie)},
+    {"LoadAction", GTK_STOCK_OPEN, "Charger", "<control>O", "Charger une partie depuis un fichier", G_CALLBACK(charger_partie)},
+    {"ScoresAction", GTK_STOCK_JUSTIFY_CENTER, "Scores", "<control>R", "Affiche les scores de la partie en cours", G_CALLBACK(afficher_scores)},
+    {"QuitAction", GTK_STOCK_QUIT, "Quitter", "<control>Q", "Quitter le jeu", G_CALLBACK(quitter_partie)},
 
-    {"EditMenuAction", NULL, "E_dit"},
-    {"UndoAction", GTK_STOCK_UNDO, "Undo", "<control>Z", "Undo last action", G_CALLBACK(annuler_coup)},
-    {"RedoAction", GTK_STOCK_REDO, "Redo", "<shift><control>Z", "Redo last action", G_CALLBACK(refaire_coup)},
-    {"SettingsAction", GTK_STOCK_PREFERENCES, "Settings", NULL, "Save game", NULL},
+    {"EditMenuAction", NULL, "E_diter", "<control>D"},
+    {"UndoAction", GTK_STOCK_UNDO, "Annuler", "<control>Z", "Annule le dernier coup", G_CALLBACK(annuler_coup)},
+    {"RedoAction", GTK_STOCK_REDO, "Refaire", "<shift><control>Z", "Refait le dernier coup annulé", G_CALLBACK(refaire_coup)},
 
-    {"HelpMenuAction", NULL, "_Help"},
-    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contents", "F1", "Manual of the game", NULL},
-    {"AboutAction", GTK_STOCK_ABOUT, "About", NULL, "About the game", NULL},
+    {"HelpMenuAction", NULL, "_Aide"},
+    {"ContentsAction", GTK_STOCK_DIALOG_QUESTION, "Contenu", "F1", "Manuel du jeu", NULL},
+    {"AboutAction", GTK_STOCK_ABOUT, "A propos", NULL, "A propos du jeu", NULL},
 };
 
 // crée l'interface que l'on peut ajouter dans n'importe quel container

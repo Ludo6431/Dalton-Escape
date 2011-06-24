@@ -6,13 +6,13 @@
             <menuitem name="Save" action="SaveAction" />
             <menuitem name="Load" action="LoadAction" />
             <separator />
+            <menuitem name="Scores" action="ScoresAction" />
+            <separator />
             <menuitem name="Quit" action="QuitAction" />
         </menu>
         <menu name="EditMenu" action="EditMenuAction">
             <menuitem name="Undo" action="UndoAction" />
             <menuitem name="Redo" action="RedoAction" />
-            <separator />
-            <menuitem name="Settings" action="SettingsAction" />
         </menu>
         <menu name="HelpMenu" action="HelpMenuAction">
             <menuitem name="Contents" action="ContentsAction" />

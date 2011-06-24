@@ -5,6 +5,7 @@
 
 // Game Menu
 void    nouvelle_partie     (GtkWidget *w, JEU *ctx);
+void    afficher_scores     (GtkWidget *w, JEU *ctx);
 void    sauvegarder_partie  (GtkWidget *w, JEU *ctx);
 void    charger_partie      (GtkWidget *w, JEU *ctx);
 void    quitter_partie      (GtkWidget *w, JEU *ctx);
