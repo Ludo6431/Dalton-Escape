@@ -4,7 +4,8 @@
 
 -- jeu --
 * empiler l'état quand on charge une partie *
-* faire si on gagne **
+* afficher quelquechose si on gagne (cf 9*9 pix) **
+* pb drag/clic si joueur gagne **
 * sauvegarder scores ?
 * 
 
@@ -17,7 +18,6 @@
 * ajouter README et INSTALL ***
 * vider liste de coups quand on charge *
 * demande si on sauvegarde quand on quitte ?
-* pb drag/clic si joueur gagne **
 * pb drag si pion déjà cliqué
 * que faire avec la couleur demandée au joueur ?
 * rajouter image à l'ouverture
