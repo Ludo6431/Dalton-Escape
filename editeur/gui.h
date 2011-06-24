@@ -7,6 +7,7 @@ typedef struct {
         GtkWidget *vbox;
             GtkWidget *menu;
                 GtkUIManager *menu_manager;
+            GtkWidget *bienvenue;
             GtkWidget *aframe;
                 GtkWidget *table;
                     GtkWidget *bt_cellules[2];

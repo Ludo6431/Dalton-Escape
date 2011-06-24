@@ -122,10 +122,10 @@ void maj_etat(JEU *ctx) {
 
     gtk_label_set_text(GTK_LABEL(ctx->gui.lbl_statut), buffer);
 
-    // mise à jour des labels de scores
-    sprintf(buffer, "%d", ctx->J1.score);
+    // mise à jour des labels indiquant le nb de pions sortis
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[0]);
     gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J1), buffer);
-    sprintf(buffer, "%d", ctx->J2.score);
+    sprintf(buffer, "%d", ctx->jeu.nb_p_sort[1]);
     gtk_entry_set_text(GTK_ENTRY(ctx->gui.score_J2), buffer);
 
     joueur = 1;

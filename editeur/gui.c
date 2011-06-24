@@ -83,6 +83,11 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
         gtk_box_pack_start(GTK_BOX(gui->vbox), gui->menu, FALSE, FALSE, 0);
         gtk_widget_show(gui->menu);
 
+        // image de bienvenue
+        gui->bienvenue = gtk_label_new("coucou !!!");
+        gtk_box_pack_start(GTK_BOX(gui->vbox), gui->bienvenue, TRUE, TRUE, 0);
+        gtk_widget_show(gui->bienvenue);
+
         // aspect frame (frame de ratio constant pour être sûr que les cases restent carrées)
         gui->aframe = gtk_aspect_frame_new(NULL, 0.5, 0.5, 9.0/13.0, 0);
         gtk_box_pack_start(GTK_BOX(gui->vbox), gui->aframe, TRUE, TRUE, 0);
@@ -145,7 +150,7 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
 
             gtk_widget_show(gui->table);
 
-        gtk_widget_show(gui->aframe);
+        gtk_widget_hide(gui->aframe);   // on la cache au début pour afficher une image
 
         // label statut
         gui->lbl_statut = gtk_label_new("Bonjour !");

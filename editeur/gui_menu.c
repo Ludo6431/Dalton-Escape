@@ -18,6 +18,10 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
 
     ev_nouvellepartie(&ctx->jeu);
 
+    // on cache l'image de bienvenue et on affiche la table de jeu
+    gtk_widget_hide(ctx->gui.bienvenue);
+    gtk_widget_show(ctx->gui.aframe);
+
     maj_etat(ctx);
 }
 

@@ -1,26 +1,31 @@
+Fichier contenant les tâches restantes à effectuer (par ordre de priorité)
+suivant ce format :
+-- contexte --
+* tâche                                                         obligatoire ?
+
+
 -- libevasion --
 * doxygen ?
 * 
 
 -- jeu --
-* afficher dialog si on gagne
-* afficher nb_p_sort dans les champs textes
+* afficher dialog si on gagne                                   X
 * sauvegarder scores ?
 * 
 
 -- editeur --
-* pouvoir editer nb_p_sort et scores
+* pouvoir éditer nb_p_sort [30%]                                X
+* pouvoir éditer scores                                         X
 * 
 
 -- commun --
-* afficher le nombre de prisonniers sortis
-* rédiger l'aide ingame ***
-* ajouter README et INSTALL ***
+* rédiger l'aide ingame *                                       X
+* ajouter README et INSTALL *                                   X
+* pb drag si pion déjà cliqué                                   X
 * demande si on sauvegarde quand on quitte ?
-* pb drag si pion déjà cliqué
 * pb si on annule le chargement d'un fichier
 * que faire avec la couleur demandée au joueur ?
-* rajouter image à l'ouverture
+* rajouter image à l'ouverture [50%]
 * toolbar
 * icône de la fenêtre
 * autotools ?
