@@ -28,5 +28,6 @@ void    jeu_ajout_nouveau   (JEU *ctx, GtkWindow *fen);
 void    jeu_empile_coup     (JEU *ctx);
 void    jeu_annule_coup     (JEU *ctx);
 void    jeu_refait_coup     (JEU *ctx);
+void    jeu_vide_coups      (JEU *ctx);
 
 #endif

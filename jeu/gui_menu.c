@@ -81,7 +81,9 @@ void charger_partie(GtkWidget *w, JEU *ctx) {
     memcpy(&ctx->J1, &J1, sizeof(JOUEUR));
     memcpy(&ctx->J2, &J2, sizeof(JOUEUR));
 
-//TODO: vider liste anciens coups    ctx->jeu.etat |= ETAT_ENREGCOUP;
+    // on réinitialise la liste des coups enregistrés et on empile l'état actuel
+    jeu_vide_coups(ctx);
+    ctx->jeu.etat |= ETAT_ENREGCOUP;
 
     // et on met à jour l'IHM
     maj_etat(ctx);

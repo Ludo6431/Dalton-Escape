@@ -82,3 +82,18 @@ void jeu_refait_coup(JEU *ctx) {
         gtk_widget_set_sensitive(gtk_ui_manager_get_widget(ctx->gui.menu_manager, "/MainMenu/EditMenu/Redo"), FALSE);
 }
 
+void jeu_vide_coups(JEU *ctx) {
+    if(!ctx->coups)
+        return;
+
+    assert(ctx->coup_curr);
+
+    void slice_free(gpointer data, gpointer user) {
+        g_slice_free(EV, data);
+    }
+    g_list_foreach(ctx->coups, slice_free, NULL);
+    g_list_free(ctx->coups);
+
+    ctx->coups = ctx->coup_curr = NULL;
+}
+

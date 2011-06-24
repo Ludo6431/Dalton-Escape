@@ -28,5 +28,6 @@ void    editeur_ajout_nouveau   (EDIT *ctx, GtkWindow *fen);
 void    editeur_empile_coup     (EDIT *ctx);
 void    editeur_annule_coup     (EDIT *ctx);
 void    editeur_refait_coup     (EDIT *ctx);
+void    editeur_vide_coups      (EDIT *ctx);
 
 #endif

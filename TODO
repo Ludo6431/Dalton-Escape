@@ -3,7 +3,6 @@
 * 
 
 -- jeu --
-* empiler l'état quand on charge une partie *
 * afficher quelquechose si on gagne (cf 9*9 pix) **
 * pb drag/clic si joueur gagne **
 * sauvegarder scores ?
@@ -16,9 +15,9 @@
 * afficher le nombre de prisonniers sortis
 * rédiger l'aide ingame ***
 * ajouter README et INSTALL ***
-* vider liste de coups quand on charge *
 * demande si on sauvegarde quand on quitte ?
 * pb drag si pion déjà cliqué
+* pb si on annule le chargement d'un fichier
 * que faire avec la couleur demandée au joueur ?
 * rajouter image à l'ouverture
 * toolbar
