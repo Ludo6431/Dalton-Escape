@@ -4,17 +4,20 @@ style "defaut"
 {
     stock["case-J1"] =
     {
-      { "pion_blanc.svg" }
+      { "dalton.png" }
+#      { "pion_blanc.svg" }
     }
 
     stock["case-J2"] =
     {
-      { "pion_noir.svg" }
+      { "dalton.png" }
+#      { "pion_noir.svg" }
     }
 
     stock["case-gardien"] =
     {
-      { "gardien.png" }
+      { "lucky_luke.png" }
+#      { "gardien.png" }
     }
 }
 
@@ -29,7 +32,15 @@ style "case_grise" = "case"
     bg[INSENSITIVE] = { 0.5, 0.5, 0.5 }
 }
 
+style "case_select" = "case"
+{
+    bg[NORMAL] = { 0.0, 1.0, 0.0 }
+    bg[PRELIGHT] = { 0.0, 1.0, 0.0 }
+    bg[INSENSITIVE] = { 0.0, 1.0, 0.0 }
+}
+
 widget "*" style "defaut"
 widget "*case*" style "case"
 widget "*case_grise*" style "case_grise"
+widget "*case_select*" style "case_select"
 

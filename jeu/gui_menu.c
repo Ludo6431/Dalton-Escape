@@ -12,9 +12,14 @@
 #include "jeu/gui_menu.h"
 
 void nouvelle_partie(GtkWidget *w, JEU *ctx) {
-    joueur_init(&ctx->J1, "Nouveau joueur", "Joueur 1", GTK_WINDOW(ctx->gui.fenetre));
+    GdkColor color;
+
+    gdk_color_parse("yellow", &color);
+    joueur_init(&ctx->J1, "Nouveau joueur", "Joueur 1", &color, GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J1), ctx->J1.pseudo);
-    joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", GTK_WINDOW(ctx->gui.fenetre));
+
+    gdk_color_parse("red", &color);
+    joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", &color, GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J2), ctx->J2.pseudo);
 
     // on réinitialise qques variables dans le cas où recommence une partie

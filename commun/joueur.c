@@ -5,7 +5,7 @@
 
 #include "commun/joueur.h"
 
-void joueur_init(JOUEUR *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
+void joueur_init(JOUEUR *pl, char *msg, char *dpseudo, GdkColor *dcolor, GtkWindow *top_win) {
     GtkWidget *dialog;
     GtkWidget *content_area;
         GtkWidget *table;
@@ -54,7 +54,7 @@ void joueur_init(JOUEUR *pl, char *msg, char *dpseudo, GtkWindow *top_win) {
                 gtk_widget_show(btc_label);
 
                 // color button
-                bt_color = gtk_color_button_new();
+                bt_color = gtk_color_button_new_with_color(dcolor);
                 gtk_table_attach(GTK_TABLE(table), bt_color, 1, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
                 gtk_widget_show(bt_color);
 

@@ -22,10 +22,9 @@ suivant ce format :
 * pb drag si pion déjà cliqué                                   X
 * demande si on sauvegarde quand on quitte ?
 * pb si on annule le chargement d'un fichier
-* que faire avec la couleur demandée au joueur ?
-* rajouter image à l'ouverture [50%]
-* toolbar
-* icône de la fenêtre
+* rajouter image à l'ouverture [50%]                            X
+* toolbar                                                       X
+* icône de la fenêtre                                           X
 * autotools ?
 * 
 

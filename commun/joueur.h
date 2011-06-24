@@ -10,7 +10,7 @@ typedef struct {
     int score;
 } JOUEUR;
 
-void    joueur_init         (JOUEUR *pl, char *msg, char *dpseudo, GtkWindow *top_win);
+void    joueur_init         (JOUEUR *pl, char *msg, char *dpseudo, GdkColor *dcolor, GtkWindow *top_win);
 
 int     joueur_sauvegarder  (JOUEUR *pl, FILE *fd);
 int     joueur_charger      (JOUEUR *pl, FILE *fd);

@@ -28,6 +28,8 @@ static void maj_appar_bouton(EDIT *ctx, GtkWidget *bt, case_t c) {
 
     // changement d'état
     if(c&CASE_PEUTCLIQUER) {
+        gtk_widget_set_name(bt, "case_select");
+
         if(ctx->jeu.etat&ETAT_ATTENTEBOUGER) {
             gtk_drag_dest_set(
                 bt,                         /* widget that will accept a drop */
@@ -61,13 +63,22 @@ static void maj_appar_bouton(EDIT *ctx, GtkWidget *bt, case_t c) {
     switch(CASE_TYPE(c)) {
     case CASE_J1:
         image = gtk_image_new_from_stock("case-J1", GTK_ICON_SIZE_DND);
+        gtk_widget_modify_bg(bt, GTK_STATE_NORMAL, &ctx->J1.color);
+        gtk_widget_modify_bg(bt, GTK_STATE_INSENSITIVE, &ctx->J1.color);
+        gtk_widget_modify_bg(bt, GTK_STATE_PRELIGHT, &ctx->J1.color);
         break;
     case CASE_J2:
         image = gtk_image_new_from_stock("case-J2", GTK_ICON_SIZE_DND);
+        gtk_widget_modify_bg(bt, GTK_STATE_NORMAL, &ctx->J2.color);
+        gtk_widget_modify_bg(bt, GTK_STATE_INSENSITIVE, &ctx->J2.color);
+        gtk_widget_modify_bg(bt, GTK_STATE_PRELIGHT, &ctx->J2.color);
         break;
     case CASE_GARDIEN:
         image = gtk_image_new_from_stock("case-gardien", GTK_ICON_SIZE_DND);
-        break;
+    case CASE_LIBRE:
+        gtk_widget_modify_bg(bt, GTK_STATE_NORMAL, NULL);
+        gtk_widget_modify_bg(bt, GTK_STATE_INSENSITIVE, NULL);
+        gtk_widget_modify_bg(bt, GTK_STATE_PRELIGHT, NULL);
     default:
         break;
     }
