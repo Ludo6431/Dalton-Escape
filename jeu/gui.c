@@ -84,7 +84,7 @@ GtkWidget *gui_init(GUI *gui, GtkWindow *fenpar, void *user_ptr) {
         gtk_widget_show(gui->menu);
 
         // image de bienvenue
-        gui->bienvenue = gtk_label_new("coucou !!!");
+        gui->bienvenue = gtk_image_new_from_file("bienvenue.png");
         gtk_box_pack_start(GTK_BOX(gui->vbox), gui->bienvenue, TRUE, TRUE, 0);
         gtk_widget_show(gui->bienvenue);
 

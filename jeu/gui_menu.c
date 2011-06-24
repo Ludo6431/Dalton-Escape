@@ -22,6 +22,13 @@ void nouvelle_partie(GtkWidget *w, JEU *ctx) {
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", &color, GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J2), ctx->J2.pseudo);
 
+    //
+    if(gdk_color_equal(&ctx->J1.color, &ctx->J2.color)) {
+        ctx->J2.color.red = 65535-ctx->J1.color.red;
+        ctx->J2.color.green = 65535-ctx->J1.color.green;
+        ctx->J2.color.blue = 65535-ctx->J1.color.blue;
+    }
+
     // on réinitialise qques variables dans le cas où recommence une partie
     ctx->jeu.joueur_debut = 0;
     ctx->J1.score = 0;
@@ -38,7 +45,6 @@ void nouvelle_partie(GtkWidget *w, JEU *ctx) {
 
 void afficher_scores(GtkWidget *w, JEU *ctx) {
     GtkWidget *dialog, *content, *label;
-    int resp;
     char buffer[256];
 
     dialog = gtk_dialog_new_with_buttons("Bravo !", GTK_WINDOW(ctx->gui.fenetre), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -109,6 +115,13 @@ void charger_partie(GtkWidget *w, JEU *ctx) {
         gtk_widget_destroy(dialog);
 
         return;
+    }
+
+    //
+    if(gdk_color_equal(&J1.color, &J2.color)) {
+        J2.color.red = 65535-J1.color.red;
+        J2.color.green = 65535-J1.color.green;
+        J2.color.blue = 65535-J1.color.blue;
     }
 
     // tout est ok, on charge

@@ -21,6 +21,13 @@ void nouvelle_partie(GtkWidget *w, EDIT *ctx) {
     joueur_init(&ctx->J2, "Nouveau joueur", "Joueur 2", &color, GTK_WINDOW(ctx->gui.fenetre));
     gtk_label_set_label(GTK_LABEL(ctx->gui.lbl_J2), ctx->J2.pseudo);
 
+    //
+    if(gdk_color_equal(&ctx->J1.color, &ctx->J2.color)) {
+        ctx->J2.color.red = 65535-ctx->J1.color.red;
+        ctx->J2.color.green = 65535-ctx->J1.color.green;
+        ctx->J2.color.blue = 65535-ctx->J1.color.blue;
+    }
+
     ev_nouvellepartie(&ctx->jeu);
 
     // on cache l'image de bienvenue et on affiche la table de jeu
@@ -176,6 +183,13 @@ void charger_partie(GtkWidget *w, EDIT *ctx) {
         gtk_widget_destroy(dialog);
 
         return;
+    }
+
+    //
+    if(gdk_color_equal(&J1.color, &J2.color)) {
+        J2.color.red = 65535-J1.color.red;
+        J2.color.green = 65535-J1.color.green;
+        J2.color.blue = 65535-J1.color.blue;
     }
 
     // tout est ok, on charge
